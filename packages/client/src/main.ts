@@ -1,6 +1,8 @@
 import Phaser from 'phaser'
 import { GameScene } from './scenes/GameScene.js'
+import { MatchEndScene } from './scenes/MatchEndScene.js'
 import { MenuScene } from './scenes/MenuScene.js'
+import { PlayerSelectScene } from './scenes/PlayerSelectScene.js'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -8,7 +10,7 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 800,
   parent: 'game',
   backgroundColor: '#1a1a2e',
-  scene: [MenuScene, GameScene],
+  scene: [MenuScene, PlayerSelectScene, GameScene, MatchEndScene],
   input: {
     gamepad: true,
   },

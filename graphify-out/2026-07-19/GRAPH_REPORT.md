@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 923 nodes · 1059 edges · 109 communities (46 shown, 63 thin omitted)
+- 923 nodes · 1148 edges · 108 communities (45 shown, 63 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `44e1fd8f`
+- Built from commit: `f9ff1e75`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,7 +34,6 @@
 - HUDRenderer
 - SFXManager
 - Phaser game HTML entry point
-- index.ts
 - Common Patterns
 - Engine — Specification
 - Common Patterns
@@ -114,53 +113,49 @@
 - Map JSON schema
 
 ## God Nodes (most connected - your core abstractions)
-1. `BodyId` - 35 edges
-2. `MatterPhysicsEngine` - 27 edges
-3. `IPhysicsEngine` - 22 edges
-4. `GameState` - 21 edges
-5. `VehicleSystem` - 20 edges
-6. `Common Patterns` - 18 edges
-7. `Common Patterns` - 17 edges
-8. `Common Patterns` - 16 edges
-9. `Game Specification` - 14 edges
-10. `Common Patterns` - 13 edges
+1. `BodyId` - 38 edges
+2. `MatterPhysicsEngine` - 30 edges
+3. `GameState` - 24 edges
+4. `IPhysicsEngine` - 23 edges
+5. `VehicleSystem` - 23 edges
+6. `GameScene` - 18 edges
+7. `Common Patterns` - 18 edges
+8. `Common Patterns` - 17 edges
+9. `Common Patterns` - 16 edges
+10. `parseMap()` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `VehicleCommand` --references--> `BodyId`  [EXTRACTED]
-  packages/engine/src/input/VehicleCommand.ts → packages/engine/src/physics/types.ts
-- `MapData` --references--> `ZoneSegment`  [EXTRACTED]
-  packages/engine/src/map/types.ts → packages/engine/src/physics/types.ts
-- `GameState` --references--> `MapData`  [EXTRACTED]
-  packages/engine/src/state/GameState.ts → packages/engine/src/map/types.ts
-- `MatterPhysicsEngine` --implements--> `IPhysicsEngine`  [EXTRACTED]
-  packages/engine/src/physics/MatterPhysicsEngine.ts → packages/engine/src/physics/IPhysicsEngine.ts
-- `MatterPhysicsEngine` --references--> `BodyId`  [EXTRACTED]
-  packages/engine/src/physics/MatterPhysicsEngine.ts → packages/engine/src/physics/types.ts
+- `GameScene` --references--> `VehicleRenderer`  [EXTRACTED]
+  packages/client/src/scenes/GameScene.ts → packages/client/src/renderers/VehicleRenderer.ts
+- `GameScene` --references--> `MatterPhysicsEngine`  [EXTRACTED]
+  packages/client/src/scenes/GameScene.ts → packages/engine/src/physics/MatterPhysicsEngine.ts
+- `GameScene` --references--> `GameState`  [EXTRACTED]
+  packages/client/src/scenes/GameScene.ts → packages/engine/src/state/GameState.ts
+- `GameScene` --references--> `VehicleSystem`  [EXTRACTED]
+  packages/client/src/scenes/GameScene.ts → packages/engine/src/systems/VehicleSystem.ts
+- `GameScene` --references--> `ZoneSystem`  [EXTRACTED]
+  packages/client/src/scenes/GameScene.ts → packages/engine/src/systems/ZoneSystem.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (109 total, 63 thin omitted)
+## Communities (108 total, 63 thin omitted)
 
 ### Community 2 - "Engine Physics"
-Cohesion: 0.06
-Nodes (21): BoostConfig, DEFAULT_BOOST_CONFIG, IPhysicsEngine, BodyId, VehicleShape, BoostPhase, BoostState, createBoostState() (+13 more)
+Cohesion: 0.10
+Nodes (5): BoostConfig, IPhysicsEngine, BodyId, GameState, VehicleSystem
 
 ### Community 3 - "CI & Agent Setup"
 Cohesion: 0.50
 Nodes (4): Biome Check, CI Pipeline, Client Build, Vitest Runner
 
 ### Community 4 - "Rendering & Scene"
-Cohesion: 0.07
-Nodes (23): PLAYER_COLORS, VehicleRenderer, CollisionCallback, MatterPhysicsEngine, PendingEffect, SHAPE_VERTICES, BodyConfig, BodyState (+15 more)
+Cohesion: 0.06
+Nodes (41): PLAYER_COLORS, VehicleRenderer, DEFAULT_BOOST_CONFIG, Pocket, CollisionCallback, MatterPhysicsEngine, PendingEffect, SHAPE_VERTICES (+33 more)
 
 ### Community 9 - "Graphics & Shapes"
 Cohesion: 0.07
 Nodes (29): All Shape Types, API Quick Reference — Graphics Methods, Canvas Transforms (Graphics), Common Patterns, Core Concepts — Graphics vs Shape Objects, Drawing Primitives (Graphics), Fill and Stroke Styles (Graphics), Generating Textures from Graphics (+21 more)
-
-### Community 19 - "index.ts"
-Cohesion: 0.12
-Nodes (8): GamepadManager, KeyboardManager, KeySet, OVERLAY_COLORS, VehicleCommand, GamePhase, GamePhaseManager, RoundEndInfo
 
 ### Community 20 - "Common Patterns"
 Cohesion: 0.05
@@ -199,8 +194,8 @@ Cohesion: 0.06
 Nodes (31): ADDED Requirements, Requirement: Boost system, Requirement: Collision events, Requirement: Fixed timestep, Requirement: Matter.js implementation, Requirement: Physics engine interface, Requirement: Random seeding, Requirement: Vehicle control (+23 more)
 
 ### Community 29 - "GameScene.ts"
-Cohesion: 0.12
-Nodes (22): ArenaRenderer, WALL_COLORS, ZONE_COLORS, parseMap(), err(), MapData, ok(), Pocket (+14 more)
+Cohesion: 0.07
+Nodes (27): GamepadManager, KeyboardManager, KeySet, ArenaRenderer, WALL_COLORS, ZONE_COLORS, GameScene, OVERLAY_COLORS (+19 more)
 
 ### Community 30 - "ADDED Requirements"
 Cohesion: 0.07
@@ -224,7 +219,7 @@ Nodes (18): 10. Input mapping (Phaser API specifics), 11. Boost particles (Phase
 
 ### Community 35 - "main.ts"
 Cohesion: 0.09
-Nodes (9): config, GameScene, COLORS, MatchEndScene, MenuScene, PlayerSelectScene, SLOT_COLOR_STRS, SLOT_COLORS (+1 more)
+Nodes (10): config, COLORS, MatchEndScene, MenuScene, PlayerSelectScene, SLOT_COLOR_STRS, SLOT_COLORS, SLOTS (+2 more)
 
 ### Community 36 - "Requirement: Map validation"
 Cohesion: 0.12
@@ -279,24 +274,24 @@ Cohesion: 0.33
 Nodes (5): compilerOptions, outDir, rootDir, extends, include
 
 ## Knowledge Gaps
-- **550 isolated node(s):** `1. Monorepo & Package Setup`, `2. Engine — IPhysicsEngine Interface`, `3. Engine — MatterPhysicsEngine Implementation`, `4. Engine — Wall Behaviours`, `5. Engine — Vehicle Control` (+545 more)
+- **543 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `$schema`, `organizeImports` (+538 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **63 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `MapData` connect `GameScene.ts` to `Engine Physics`, `Rendering & Scene`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
-- **Why does `BodyId` connect `Engine Physics` to `index.ts`, `Rendering & Scene`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `VehicleCommand` connect `index.ts` to `Engine Physics`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **What connects `1. Monorepo & Package Setup`, `2. Engine — IPhysicsEngine Interface`, `3. Engine — MatterPhysicsEngine Implementation` to the rest of the system?**
-  _559 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `MatterPhysicsEngine` connect `Rendering & Scene` to `Engine Physics`, `GameScene.ts`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **Why does `GameState` connect `Engine Physics` to `Rendering & Scene`, `GameScene.ts`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **Why does `GameScene` connect `GameScene.ts` to `Engine Physics`, `main.ts`, `Rendering & Scene`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
+- **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
+  _552 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Engine Physics` be split into smaller, more focused modules?**
-  _Cohesion score 0.06105834464043419 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09639953542392567 - nodes in this community are weakly interconnected._
 - **Should `Rendering & Scene` be split into smaller, more focused modules?**
-  _Cohesion score 0.07330827067669173 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.058002735978112174 - nodes in this community are weakly interconnected._
 - **Should `Graphics & Shapes` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._

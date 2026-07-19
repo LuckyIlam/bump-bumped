@@ -85,12 +85,12 @@
 
 ## 11. Client — Screens
 
-- [ ] 11.1 Implement TitleScene: game title, "Press any key/button"
-- [ ] 11.2 Implement PlayerSelectScene: 4 slots, colour assignment, device detection, START button
-- [ ] 11.3 Implement countdown overlay (3-2-1-GO!)
-- [ ] 11.4 Implement GameScene: main gameplay loop, engine step → render cycle
-- [ ] 11.5 Implement RoundEnd overlay: winner display, scoreboard, 3s pause
-- [ ] 11.6 Implement MatchEnd scene: winner highlight, full scoreboard, return to title
+- [x] 11.1 Implement TitleScene: game title, "Press any key/button"
+- [x] 11.2 Implement PlayerSelectScene: 4 slots, colour assignment, device detection, START button
+- [x] 11.3 Implement countdown overlay (3-2-1-GO!)
+- [x] 11.4 Implement GameScene: main gameplay loop, engine step → render cycle
+- [x] 11.5 Implement RoundEnd overlay: winner display, scoreboard, 3s pause
+- [x] 11.6 Implement MatchEnd scene: winner highlight, full scoreboard, return to title
 
 ## 12. Client — Rendering
 
