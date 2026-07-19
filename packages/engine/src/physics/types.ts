@@ -56,6 +56,7 @@ export interface BodyState {
   velocityX: number
   velocityY: number
   angularVelocity: number
+  shape: VehicleShape
 }
 
 export interface CollisionEvent {

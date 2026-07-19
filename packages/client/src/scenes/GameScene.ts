@@ -1,4 +1,4 @@
-import type { MapData, VehicleCommand } from '@bump-bumped/engine'
+import type { MapData, VehicleCommand, VehicleShape } from '@bump-bumped/engine'
 import { MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
 import Phaser from 'phaser'
 import classicMapData from '../map-data.json'
@@ -6,6 +6,8 @@ import { ArenaRenderer } from '../renderers/ArenaRenderer.js'
 import { VehicleRenderer } from '../renderers/VehicleRenderer.js'
 
 const STEP_MS = 1000 / 60
+
+const VEHICLE_SHAPES: VehicleShape[] = ['circle', 'square', 'diamond', 'hexagon']
 
 export class GameScene extends Phaser.Scene {
   private engine!: MatterPhysicsEngine
@@ -15,6 +17,7 @@ export class GameScene extends Phaser.Scene {
   private vehicleRenderer!: VehicleRenderer
   private map!: MapData
   private accumulator = 0
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
 
   constructor() {
     super('GameScene')
@@ -44,7 +47,7 @@ export class GameScene extends Phaser.Scene {
       this.engine.addBody({
         id,
         type: 'vehicle',
-        shape: 'circle',
+        shape: VEHICLE_SHAPES[i % VEHICLE_SHAPES.length],
         radius: 14,
         x: spawn.x,
         y: spawn.y,
@@ -60,6 +63,7 @@ export class GameScene extends Phaser.Scene {
     this.arenaRenderer.draw()
 
     this.vehicleRenderer = new VehicleRenderer(this)
+    this.cursors = this.input.keyboard!.createCursorKeys()
   }
 
   update(_time: number, delta: number): void {
@@ -81,15 +85,12 @@ export class GameScene extends Phaser.Scene {
 
   private collectCommands(): VehicleCommand[] {
     const commands: VehicleCommand[] = []
-    const cursors = this.input.keyboard?.createCursorKeys()
-
-    if (!cursors) return commands
 
     commands.push({
       vehicleId: 'vehicle_0',
-      throttle: cursors.up.isDown ? 1 : 0,
-      turn: cursors.left.isDown ? -1 : cursors.right.isDown ? 1 : 0,
-      boost: cursors.shift?.isDown ?? false,
+      throttle: this.cursors.up.isDown ? 1 : 0,
+      turn: this.cursors.left.isDown ? -1 : this.cursors.right.isDown ? 1 : 0,
+      boost: this.cursors.shift?.isDown ?? false,
     })
 
     return commands
