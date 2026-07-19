@@ -1,56 +1,56 @@
 ## 1. Monorepo & Package Setup
 
-- [ ] 1.1 Initialize root package.json with npm workspaces (`packages/engine`, `packages/client`)
-- [ ] 1.2 Scaffold `packages/engine/` with TypeScript config, package.json, src/ structure
-- [ ] 1.3 Scaffold `packages/client/` with TypeScript config, package.json, src/ structure
-- [ ] 1.4 Add dependencies: `matter-js` and `@types/matter-js` to engine package
-- [ ] 1.5 Verify Phaser 4 import works in client package
-- [ ] 1.6 Set up Vitest in engine package with a passing test
+- [x] 1.1 Initialize root package.json with npm workspaces (`packages/engine`, `packages/client`)
+- [x] 1.2 Scaffold `packages/engine/` with TypeScript config, package.json, src/ structure
+- [x] 1.3 Scaffold `packages/client/` with TypeScript config, package.json, src/ structure
+- [x] 1.4 Add dependencies: `matter-js` and `@types/matter-js` to engine package
+- [x] 1.5 Verify Phaser 4 import works in client package
+- [x] 1.6 Set up Vitest in engine package with a passing test
 
 ## 2. Engine — IPhysicsEngine Interface
 
-- [ ] 2.1 Define shared types: `Vec2`, `BodyId`, `BodyConfig`, `BodyState`, `WorldConfig`, `WallSegment`, `CollisionEvent`, `WorldState`
-- [ ] 2.2 Define `VehicleShape` type and `WallType` type
-- [ ] 2.3 Define `IPhysicsEngine` interface with all methods
-- [ ] 2.4 Define `VehicleCommand` interface
-- [ ] 2.5 Write unit tests verifying the interface contract
+- [x] 2.1 Define shared types: `Vec2`, `BodyId`, `BodyConfig`, `BodyState`, `WorldConfig`, `WallSegment`, `CollisionEvent`, `WorldState`
+- [x] 2.2 Define `VehicleShape` type and `WallType` type
+- [x] 2.3 Define `IPhysicsEngine` interface with all methods
+- [x] 2.4 Define `VehicleCommand` interface
+- [x] 2.5 Write unit tests verifying the interface contract
 
 ## 3. Engine — MatterPhysicsEngine Implementation
 
-- [ ] 3.1 Implement `createWorld` — create Matter.js Engine + World from WorldConfig
-- [ ] 3.2 Implement `addBody` — create Matter.js bodies for all 4 shapes (circle, rectangle, polygon)
-- [ ] 3.3 Implement `removeBody`, `getBody`, `setBodyVelocity`, `applyForce`
-- [ ] 3.4 Implement `step` — advance Matter.js engine with fixed delta
-- [ ] 3.5 Implement `onCollision` — wrap Matter.js collision events
-- [ ] 3.6 Implement `getBodies` and `getWorldState` — snapshot current state
-- [ ] 3.7 Write unit tests: body creation, removal, state queries, step advancement
+- [x] 3.1 Implement `createWorld` — create Matter.js Engine + World from WorldConfig
+- [x] 3.2 Implement `addBody` — create Matter.js bodies for all 4 shapes (circle, rectangle, polygon)
+- [x] 3.3 Implement `removeBody`, `getBody`, `setBodyVelocity`, `applyForce`
+- [x] 3.4 Implement `step` — advance Matter.js engine with fixed delta
+- [x] 3.5 Implement `onCollision` — wrap Matter.js collision events
+- [x] 3.6 Implement `getBodies` and `getWorldState` — snapshot current state
+- [x] 3.7 Write unit tests: body creation, removal, state queries, step advancement
 
 ## 4. Engine — Wall Behaviours
 
-- [ ] 4.1 Implement `bounce` wall — default Matter.js reflection with restitution 0.7
-- [ ] 4.2 Implement `reflect` wall — intercept collision, reverse velocity vector
-- [ ] 4.3 Implement `absorb` wall — zero perpendicular velocity component on collision
-- [ ] 4.4 Implement `amplify` wall — multiply outgoing velocity by 1.5
-- [ ] 4.5 Write unit tests for each wall type: direction-in → direction-out assertions
+- [x] 4.1 Implement `bounce` wall — default Matter.js reflection with restitution 0.7
+- [x] 4.2 Implement `reflect` wall — intercept collision, reverse velocity vector
+- [x] 4.3 Implement `absorb` wall — zero perpendicular velocity component on collision
+- [x] 4.4 Implement `amplify` wall — multiply outgoing velocity by 1.5
+- [x] 4.5 Write unit tests for each wall type: direction-in → direction-out assertions
 
 ## 5. Engine — Vehicle Control
 
-- [ ] 5.1 Implement throttle: apply forward force in vehicle heading direction
-- [ ] 5.2 Implement turn: apply angular velocity proportional to turn input
-- [ ] 5.3 Implement no-reverse: throttle clamped to ≥ 0, friction decelerates
-- [ ] 5.4 Implement boost state machine (IDLE → ACTIVE → RECHARGING) with timers
-- [ ] 5.5 Implement boost effects: speed ×2.5, turn rate ×0.5, increased inertia
-- [ ] 5.6 Expose boost state for UI query
-- [ ] 5.7 Write unit tests: movement, rotation, boost transitions, timer accuracy
+- [x] 5.1 Implement throttle: apply forward force in vehicle heading direction
+- [x] 5.2 Implement turn: apply angular velocity proportional to turn input
+- [x] 5.3 Implement no-reverse: throttle clamped to ≥ 0, friction decelerates
+- [x] 5.4 Implement boost state machine (IDLE → ACTIVE → RECHARGING) with timers
+- [x] 5.5 Implement boost effects: speed ×2.5, turn rate ×0.5, increased inertia
+- [x] 5.6 Expose boost state for UI query
+- [x] 5.7 Write unit tests: movement, rotation, boost transitions, timer accuracy
 
 ## 6. Engine — Zone System
 
-- [ ] 6.1 Implement zone modifier look-up by position (after each step)
-- [ ] 6.2 Implement `neutral` zone (no modifier)
-- [ ] 6.3 Implement `grip` zone (friction ×1.5, max speed ×0.8, turn ×1.3)
-- [ ] 6.4 Implement `slick` zone (friction ×0.3, max speed ×1.3, turn ×0.5)
-- [ ] 6.5 Implement `accelerator` zone (max speed ×1.5, turn ×0.7)
-- [ ] 6.6 Write unit tests: each zone type produces correct modifiers
+- [x] 6.1 Implement zone modifier look-up by position (after each step)
+- [x] 6.2 Implement `neutral` zone (no modifier)
+- [x] 6.3 Implement `grip` zone (friction ×1.5, max speed ×0.8, turn ×1.3)
+- [x] 6.4 Implement `slick` zone (friction ×0.3, max speed ×1.3, turn ×0.5)
+- [x] 6.5 Implement `accelerator` zone (max speed ×1.5, turn ×0.7)
+- [x] 6.6 Write unit tests: each zone type produces correct modifiers
 
 ## 7. Engine — Map System
 
