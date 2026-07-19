@@ -1,5 +1,5 @@
-import type { MapData, VehicleCommand, VehicleShape } from '@bump-bumped/engine'
-import { MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
+import type { MapData, VehicleCommand } from '@bump-bumped/engine'
+import { GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
 import Phaser from 'phaser'
 import classicMapData from '../map-data.json'
 import { ArenaRenderer } from '../renderers/ArenaRenderer.js'
@@ -7,12 +7,11 @@ import { VehicleRenderer } from '../renderers/VehicleRenderer.js'
 
 const STEP_MS = 1000 / 60
 
-const VEHICLE_SHAPES: VehicleShape[] = ['circle', 'square', 'diamond', 'hexagon']
-
 export class GameScene extends Phaser.Scene {
   private engine!: MatterPhysicsEngine
   private vehicleSystem!: VehicleSystem
   private zoneSystem!: ZoneSystem
+  private gameState!: GameState
   private arenaRenderer!: ArenaRenderer
   private vehicleRenderer!: VehicleRenderer
   private map!: MapData
@@ -40,24 +39,8 @@ export class GameScene extends Phaser.Scene {
 
     this.vehicleSystem = new VehicleSystem(this.engine)
     this.zoneSystem = new ZoneSystem(this.map.zones)
-
-    for (let i = 0; i < this.map.spawns.length; i++) {
-      const spawn = this.map.spawns[i]
-      const id = `vehicle_${i}`
-      this.engine.addBody({
-        id,
-        type: 'vehicle',
-        shape: VEHICLE_SHAPES[i % VEHICLE_SHAPES.length],
-        radius: 14,
-        x: spawn.x,
-        y: spawn.y,
-        angle: (spawn.angle * Math.PI) / 180,
-        mass: 1,
-        restitution: 0.5,
-        friction: 0.1,
-      })
-      this.vehicleSystem.register(id)
-    }
+    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map)
+    this.gameState.startMatch()
 
     this.arenaRenderer = new ArenaRenderer(this, this.map)
     this.arenaRenderer.draw()
@@ -77,6 +60,15 @@ export class GameScene extends Phaser.Scene {
       this.engine.step(STEP_MS)
       this.vehicleSystem.postStep()
       this.updateZones()
+      this.gameState.update(_time, STEP_MS)
+
+      if (this.gameState.isRoundEnded()) {
+        if (this.gameState.isMatchFinished()) {
+          this.scene.start('MenuScene')
+          return
+        }
+        this.gameState.startRound()
+      }
     }
 
     const state = this.engine.getBodies()

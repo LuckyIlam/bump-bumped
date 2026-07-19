@@ -22,6 +22,8 @@ export type {
 export { ZONE_MODIFIERS } from './physics/types.js'
 export type { BoostPhase, BoostState } from './state/BoostState.js'
 export { createBoostState, updateBoostPhase } from './state/BoostState.js'
+export type { GameStateSnapshot, MatchPhase, MatchState, PlayerState, RoundPhase, RoundState, ShapeRandomizer } from './state/GameState.js'
+export { GameState } from './state/GameState.js'
 export type { VehicleConfig } from './systems/VehicleSystem.js'
 export { VehicleSystem } from './systems/VehicleSystem.js'
 export { ZoneSystem } from './systems/ZoneSystem.js'

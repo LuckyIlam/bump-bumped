@@ -82,7 +82,7 @@ describe('VehicleSystem + ZoneSystem integration', () => {
     vs.setZoneModifiers('v1', mod.frictionMultiplier, mod.maxSpeedMultiplier, mod.turnRateMultiplier)
 
     vs.update(0, [{ vehicleId: 'v1', throttle: 0, turn: 1, boost: false }])
-    engine.step(1 / 60)
+    engine.step(1000 / 60)
     const gripState = engine.getBody('v1')!
 
     // Compare with neutral zone
@@ -92,7 +92,7 @@ describe('VehicleSystem + ZoneSystem integration', () => {
     const vs2 = new VehicleSystem(engine2)
     vs2.register('v1')
     vs2.update(0, [{ vehicleId: 'v1', throttle: 0, turn: 1, boost: false }])
-    engine2.step(1 / 60)
+    engine2.step(1000 / 60)
     const neutralState = engine2.getBody('v1')!
 
     expect(Math.abs(gripState.angle)).toBeGreaterThan(Math.abs(neutralState.angle))
@@ -108,7 +108,7 @@ describe('VehicleSystem + ZoneSystem integration', () => {
     engine.setBodyVelocity('v1', { x: 10, y: 0 })
     vs.setZoneModifiers('v1', 0.3, 1, 1) // slick zone
     vs.update(0, [{ vehicleId: 'v1', throttle: 0, turn: 0, boost: false }])
-    engine.step(1 / 60)
+    engine.step(1000 / 60)
     const slickState = engine.getBody('v1')!
 
     // Neutral zone (friction = 1)
@@ -119,7 +119,7 @@ describe('VehicleSystem + ZoneSystem integration', () => {
     vs2.register('v1')
     engine2.setBodyVelocity('v1', { x: 10, y: 0 })
     vs2.update(0, [{ vehicleId: 'v1', throttle: 0, turn: 0, boost: false }])
-    engine2.step(1 / 60)
+    engine2.step(1000 / 60)
     const neutralState = engine2.getBody('v1')!
 
     // With less friction, slick zone should maintain more speed
@@ -135,7 +135,7 @@ describe('VehicleSystem + ZoneSystem integration', () => {
 
     vs.setZoneModifiers('v1', 1, 0.5, 1)
     engine.setBodyVelocity('v1', { x: 100, y: 0 })
-    engine.step(1 / 60)
+    engine.step(1000 / 60)
     vs.postStep()
     const state = engine.getBody('v1')!
     expect(Math.abs(state.velocityX)).toBeLessThan(15)

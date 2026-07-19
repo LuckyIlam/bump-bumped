@@ -53,7 +53,7 @@ describe('MatterPhysicsEngine', () => {
 
     engine.applyForce(id, { x: 0.05, y: 0 })
     const before = engine.getBody(id)!
-    engine.step(1 / 60)
+    engine.step(1000 / 60)
     const after = engine.getBody(id)!
 
     expect(after.x).not.toBe(before.x)
@@ -75,7 +75,7 @@ describe('MatterPhysicsEngine', () => {
     engine.createWorld(defaultWorld)
     const id = engine.addBody(createVehicle())
     engine.setBodyVelocity(id, { x: 5, y: 0 })
-    engine.step(1 / 60)
+    engine.step(1000 / 60)
     const state = engine.getBody(id)!
     expect(state.velocityX).toBeGreaterThan(0)
   })
