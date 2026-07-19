@@ -1,4 +1,10 @@
 {
+  "name": "bump-bumped",
+  "private": true,
+  "workspaces": [
+    "packages/engine",
+    "packages/client"
+  ],
   "dependencies": {
     "phaser": "^4.2.1"
   }
