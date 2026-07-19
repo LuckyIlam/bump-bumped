@@ -1,14 +1,6 @@
 import Matter from 'matter-js'
-import type { IPhysicsEngine, CollisionCallback } from './IPhysicsEngine.js'
-import type {
-  BodyId,
-  BodyConfig,
-  BodyState,
-  WorldConfig,
-  WallType,
-  WorldState,
-} from './types.js'
-import type { CollisionEvent } from './types.js'
+import type { CollisionCallback, IPhysicsEngine } from './IPhysicsEngine.js'
+import type { BodyConfig, BodyId, BodyState, CollisionEvent, WallType, WorldConfig, WorldState } from './types.js'
 
 const SHAPE_VERTICES: Record<string, (r: number) => { x: number; y: number }[]> = {
   hexagon: (r: number) => {
@@ -69,7 +61,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
       Matter.Composite.add(this.world, body)
     }
 
-        Matter.Events.on(this.engine, 'collisionStart', (event: any) => {
+    Matter.Events.on(this.engine, 'collisionStart', (event: any) => {
       for (const pair of event.pairs) {
         this.queueCollisionEffect(pair)
       }
@@ -98,7 +90,13 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     if (wallTypeA && !wallTypeB) {
       this.pendingEffects.push({ body: b, wallType: wallTypeA, normal, depth, preVelocity: { x: b.velocity.x, y: b.velocity.y } })
     } else if (wallTypeB && !wallTypeA) {
-      this.pendingEffects.push({ body: a, wallType: wallTypeB, normal: { x: -normal.x, y: -normal.y }, depth, preVelocity: { x: a.velocity.x, y: a.velocity.y } })
+      this.pendingEffects.push({
+        body: a,
+        wallType: wallTypeB,
+        normal: { x: -normal.x, y: -normal.y },
+        depth,
+        preVelocity: { x: a.velocity.x, y: a.velocity.y },
+      })
     }
   }
 

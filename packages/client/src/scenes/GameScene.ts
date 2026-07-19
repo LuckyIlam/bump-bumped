@@ -1,9 +1,9 @@
-import Phaser from 'phaser'
-import { MatterPhysicsEngine, VehicleSystem, ZoneSystem, parseMap } from '@bump-bumped/engine'
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
+import { MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
+import Phaser from 'phaser'
+import classicMapData from '../map-data.json'
 import { ArenaRenderer } from '../renderers/ArenaRenderer.js'
 import { VehicleRenderer } from '../renderers/VehicleRenderer.js'
-import classicMapData from '../map-data.json'
 
 const STEP_MS = 1000 / 60
 

@@ -1,17 +1,30 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
+import type { BodyConfig, WorldConfig, ZoneSegment } from '../physics/types.js'
+import { ZONE_MODIFIERS } from '../physics/types.js'
 import { VehicleSystem } from '../systems/VehicleSystem.js'
 import { ZoneSystem } from '../systems/ZoneSystem.js'
-import { ZONE_MODIFIERS } from '../physics/types.js'
-import type { ZoneSegment, WorldConfig, BodyConfig } from '../physics/types.js'
 
 const world: WorldConfig = {
-  width: 1200, height: 800,
+  width: 1200,
+  height: 800,
   walls: [{ x1: 0, y1: 0, x2: 1200, y2: 0, type: 'bounce' }],
 }
 
 function vehicle(overrides: Partial<BodyConfig> = {}): BodyConfig {
-  return { id: 'v1', type: 'vehicle', shape: 'circle', radius: 20, x: 400, y: 400, angle: 0, mass: 1, restitution: 0.5, friction: 0.1, ...overrides }
+  return {
+    id: 'v1',
+    type: 'vehicle',
+    shape: 'circle',
+    radius: 20,
+    x: 400,
+    y: 400,
+    angle: 0,
+    mass: 1,
+    restitution: 0.5,
+    friction: 0.1,
+    ...overrides,
+  }
 }
 
 describe('ZoneSystem', () => {
@@ -33,9 +46,7 @@ describe('ZoneSystem', () => {
   })
 
   it('returns type by position', () => {
-    const zones: ZoneSegment[] = [
-      { x: 0, y: 0, width: 100, height: 100, type: 'accelerator' },
-    ]
+    const zones: ZoneSegment[] = [{ x: 0, y: 0, width: 100, height: 100, type: 'accelerator' }]
     const zs = new ZoneSystem(zones)
     expect(zs.getTypeAt(50, 50)).toBe('accelerator')
     expect(zs.getTypeAt(150, 150)).toBe('neutral')

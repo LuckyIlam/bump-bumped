@@ -1,10 +1,10 @@
-import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
-import type { BodyId } from '../physics/types.js'
-import type { VehicleCommand } from '../input/VehicleCommand.js'
 import type { BoostConfig } from '../config/boost-config.js'
 import { DEFAULT_BOOST_CONFIG } from '../config/boost-config.js'
-import { createBoostState, updateBoostPhase } from '../state/BoostState.js'
+import type { VehicleCommand } from '../input/VehicleCommand.js'
+import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
+import type { BodyId } from '../physics/types.js'
 import type { BoostPhase, BoostState } from '../state/BoostState.js'
+import { createBoostState, updateBoostPhase } from '../state/BoostState.js'
 
 export interface VehicleConfig {
   maxForce: number

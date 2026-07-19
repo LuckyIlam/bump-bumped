@@ -1,11 +1,12 @@
-import { describe, it, expect } from 'vitest'
-import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
-import { VehicleSystem, DEFAULT_VEHICLE_CONFIG } from '../systems/VehicleSystem.js'
+import { describe, expect, it } from 'vitest'
 import { DEFAULT_BOOST_CONFIG } from '../config/boost-config.js'
-import type { WorldConfig, BodyConfig } from '../physics/types.js'
+import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
+import type { BodyConfig, WorldConfig } from '../physics/types.js'
+import { DEFAULT_VEHICLE_CONFIG, VehicleSystem } from '../systems/VehicleSystem.js'
 
 const world: WorldConfig = {
-  width: 1200, height: 800,
+  width: 1200,
+  height: 800,
   walls: [
     { x1: 0, y1: 0, x2: 1200, y2: 0, type: 'bounce' },
     { x1: 1200, y1: 0, x2: 1200, y2: 800, type: 'bounce' },
@@ -16,7 +17,17 @@ const world: WorldConfig = {
 
 function vehicle(overrides: Partial<BodyConfig> = {}): BodyConfig {
   return {
-    id: 'v1', type: 'vehicle', shape: 'circle', radius: 20, x: 400, y: 400, angle: 0, mass: 1, restitution: 0.5, friction: 0.1, ...overrides,
+    id: 'v1',
+    type: 'vehicle',
+    shape: 'circle',
+    radius: 20,
+    x: 400,
+    y: 400,
+    angle: 0,
+    mass: 1,
+    restitution: 0.5,
+    friction: 0.1,
+    ...overrides,
   }
 }
 

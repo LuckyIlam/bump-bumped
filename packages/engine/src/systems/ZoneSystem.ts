@@ -1,4 +1,4 @@
-import type { ZoneSegment, ZoneModifier, ZoneType } from '../physics/types.js'
+import type { ZoneModifier, ZoneSegment, ZoneType } from '../physics/types.js'
 import { ZONE_MODIFIERS } from '../physics/types.js'
 
 export class ZoneSystem {

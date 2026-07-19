@@ -32,7 +32,8 @@ export function validateWalls(data: Record<string, unknown>): string | null {
     if (typeof w.y1 !== 'number') return `walls[${i}].y1 must be a number`
     if (typeof w.x2 !== 'number') return `walls[${i}].x2 must be a number`
     if (typeof w.y2 !== 'number') return `walls[${i}].y2 must be a number`
-    if (typeof w.type !== 'string' || !VALID_WALL_TYPES.includes(w.type)) return `walls[${i}].type must be one of: ${VALID_WALL_TYPES.join(', ')}`
+    if (typeof w.type !== 'string' || !VALID_WALL_TYPES.includes(w.type))
+      return `walls[${i}].type must be one of: ${VALID_WALL_TYPES.join(', ')}`
   }
   return null
 }
@@ -58,7 +59,8 @@ export function validateZones(data: Record<string, unknown>): string | null {
     if (typeof z.y !== 'number') return `zones[${i}].y must be a number`
     if (typeof z.width !== 'number' || z.width <= 0) return `zones[${i}].width must be a positive number`
     if (typeof z.height !== 'number' || z.height <= 0) return `zones[${i}].height must be a positive number`
-    if (typeof z.type !== 'string' || !VALID_ZONE_TYPES.includes(z.type)) return `zones[${i}].type must be one of: ${VALID_ZONE_TYPES.join(', ')}`
+    if (typeof z.type !== 'string' || !VALID_ZONE_TYPES.includes(z.type))
+      return `zones[${i}].type must be one of: ${VALID_ZONE_TYPES.join(', ')}`
   }
   return null
 }
