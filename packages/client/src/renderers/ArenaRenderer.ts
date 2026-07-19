@@ -1,5 +1,5 @@
-import Phaser from 'phaser'
-import type { MapData, WallSegment, ZoneSegment, Pocket } from '@bump-bumped/engine'
+import type { MapData } from '@bump-bumped/engine'
+import type Phaser from 'phaser'
 
 const WALL_COLORS: Record<string, number> = {
   bounce: 0xaaaaaa,

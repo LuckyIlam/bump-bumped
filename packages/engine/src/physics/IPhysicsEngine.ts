@@ -1,11 +1,4 @@
-import type {
-  BodyId,
-  BodyConfig,
-  BodyState,
-  CollisionEvent,
-  WorldConfig,
-  WorldState,
-} from './types.js'
+import type { BodyConfig, BodyId, BodyState, CollisionEvent, WorldConfig, WorldState } from './types.js'
 
 export type CollisionCallback = (event: CollisionEvent) => void
 

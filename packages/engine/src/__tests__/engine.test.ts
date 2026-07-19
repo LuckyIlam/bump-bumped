@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
-import type { WorldConfig, BodyConfig } from '../physics/types.js'
+import type { BodyConfig, WorldConfig } from '../physics/types.js'
 
 const defaultWorld: WorldConfig = {
   width: 1200,

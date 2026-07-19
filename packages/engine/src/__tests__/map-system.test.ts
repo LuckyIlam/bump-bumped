@@ -1,9 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { describe, expect, it } from 'vitest'
 import { parseMap } from '../map/parser.js'
-import type { MapData } from '../map/types.js'
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 

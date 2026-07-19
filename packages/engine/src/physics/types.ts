@@ -81,5 +81,5 @@ export const ZONE_MODIFIERS: Record<ZoneType, ZoneModifier> = {
   neutral: { frictionMultiplier: 1, maxSpeedMultiplier: 1, turnRateMultiplier: 1 },
   grip: { frictionMultiplier: 1.5, maxSpeedMultiplier: 0.8, turnRateMultiplier: 1.3 },
   slick: { frictionMultiplier: 0.3, maxSpeedMultiplier: 1.3, turnRateMultiplier: 0.5 },
-  accelerator: { frictionMultiplier: 1, maxSpeedMultiplier: 1.5, turnRateMultiplier: 0.7 }
+  accelerator: { frictionMultiplier: 1, maxSpeedMultiplier: 1.5, turnRateMultiplier: 0.7 },
 }

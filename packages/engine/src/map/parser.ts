@@ -1,13 +1,13 @@
 import type { MapData, Result } from './types.js'
-import { ok, err } from './types.js'
+import { err, ok } from './types.js'
 import {
-  validateRequiredFields,
-  validateFieldTypes,
-  validateWalls,
-  validatePockets,
-  validateZones,
-  validateSpawns,
   validateBounds,
+  validateFieldTypes,
+  validatePockets,
+  validateRequiredFields,
+  validateSpawns,
+  validateWalls,
+  validateZones,
 } from './validator.js'
 
 const SUPPORTED_FORMAT_VERSION = 1
