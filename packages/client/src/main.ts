@@ -9,6 +9,9 @@ const config: Phaser.Types.Core.GameConfig = {
   parent: 'game',
   backgroundColor: '#1a1a2e',
   scene: [MenuScene, GameScene],
+  input: {
+    gamepad: true,
+  },
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
