@@ -1,6 +1,8 @@
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
 import { GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
 import Phaser from 'phaser'
+import { GamepadManager } from '../input/GamepadManager.js'
+import { KeyboardManager } from '../input/KeyboardManager.js'
 import classicMapData from '../map-data.json'
 import { ArenaRenderer } from '../renderers/ArenaRenderer.js'
 import { VehicleRenderer } from '../renderers/VehicleRenderer.js'
@@ -16,7 +18,8 @@ export class GameScene extends Phaser.Scene {
   private vehicleRenderer!: VehicleRenderer
   private map!: MapData
   private accumulator = 0
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+  private keyboardManager!: KeyboardManager
+  private gamepadManager!: GamepadManager
 
   constructor() {
     super('GameScene')
@@ -45,11 +48,13 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
     this.cameras.main.setScroll(0, 0)
 
+    this.keyboardManager = new KeyboardManager(this)
+    this.gamepadManager = new GamepadManager(this)
+
     this.arenaRenderer = new ArenaRenderer(this, this.map)
     this.arenaRenderer.draw()
 
     this.vehicleRenderer = new VehicleRenderer(this)
-    this.cursors = this.input.keyboard!.createCursorKeys()
   }
 
   update(_time: number, delta: number): void {
@@ -81,12 +86,13 @@ export class GameScene extends Phaser.Scene {
   private collectCommands(): VehicleCommand[] {
     const commands: VehicleCommand[] = []
 
-    commands.push({
-      vehicleId: 'vehicle_0',
-      throttle: this.cursors.up.isDown ? 1 : 0,
-      turn: this.cursors.left.isDown ? -1 : this.cursors.right.isDown ? 1 : 0,
-      boost: this.cursors.shift?.isDown ?? false,
-    })
+    commands.push(this.keyboardManager.getP1Command('vehicle_0'))
+    commands.push(this.keyboardManager.getP2Command('vehicle_1'))
+
+    const gamepadCommands = this.gamepadManager.getCommands()
+    for (const cmd of gamepadCommands) {
+      commands.push(cmd)
+    }
 
     return commands
   }

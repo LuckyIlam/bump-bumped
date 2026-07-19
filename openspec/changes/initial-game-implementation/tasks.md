@@ -78,10 +78,10 @@
 
 ## 10. Client — Input
 
-- [ ] 10.1 Implement `KeyboardManager`: detect AZERTY vs QWERTY layout, map ZQSD/Arrows to commands
-- [ ] 10.2 Implement `GamepadManager`: detect gamepads, map triggers/sticks/buttons to commands
-- [ ] 10.3 Implement input device assignment on player select screen
-- [ ] 10.4 Write input-to-command pipeline: raw input → `VehicleCommand` per player per frame
+- [x] 10.1 Implement `KeyboardManager`: detect AZERTY vs QWERTY layout, map ZQSD/Arrows to commands
+- [x] 10.2 Implement `GamepadManager`: detect gamepads, map triggers/sticks/buttons to commands
+- [x] 10.3 Implement input device assignment on player select screen
+- [x] 10.4 Write input-to-command pipeline: raw input → `VehicleCommand` per player per frame
 
 ## 11. Client — Screens
 
