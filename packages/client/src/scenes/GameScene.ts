@@ -42,6 +42,9 @@ export class GameScene extends Phaser.Scene {
     this.gameState = new GameState(this.engine, this.vehicleSystem, this.map)
     this.gameState.startMatch()
 
+    this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
+    this.cameras.main.setScroll(0, 0)
+
     this.arenaRenderer = new ArenaRenderer(this, this.map)
     this.arenaRenderer.draw()
 

@@ -54,10 +54,10 @@
 
 ## 7. Engine — Map System
 
-- [ ] 7.1 Implement pure function `parseMap(json: string): Result<MapData, Error>`
-- [ ] 7.2 Implement map validation: required fields, type checks, bounds, spawn count
-- [ ] 7.3 Create default "Classic" map JSON file
-- [ ] 7.4 Write unit tests: valid parse, invalid JSON, missing fields, bad types, bounds, spawn count, round-trip
+- [x] 7.1 Implement pure function `parseMap(json: string): Result<MapData, Error>`
+- [x] 7.2 Implement map validation: required fields, type checks, bounds, spawn count
+- [x] 7.3 Create default "Classic" map JSON file
+- [x] 7.4 Write unit tests: valid parse, invalid JSON, missing fields, bad types, bounds, spawn count, round-trip
 
 ## 8. Engine — GameState
 
@@ -72,9 +72,9 @@
 
 ## 9. Client — Project Bootstrap
 
-- [ ] 9.1 Create Phaser 4 game config (top-down view, 1200×800 canvas)
-- [ ] 9.2 Create scene manager with scene transitions
-- [ ] 9.3 Configure camera (fixed top-down, no scrolling)
+- [x] 9.1 Create Phaser 4 game config (top-down view, 1200×800 canvas)
+- [x] 9.2 Create scene manager with scene transitions
+- [x] 9.3 Configure camera (fixed top-down, no scrolling)
 
 ## 10. Client — Input
 
