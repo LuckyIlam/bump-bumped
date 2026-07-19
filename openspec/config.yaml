@@ -3,11 +3,16 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: TypeScript, Phaser 4, Matter.js
+  Domain: local multiplayer party game (bumper cars × billiard)
+  Architecture: monorepo with npm workspaces (packages/engine/, packages/client/)
+  Engine: pure TypeScript, zero DOM, shared client+server via IPhysicsEngine interface
+  Language: TypeScript throughout (no JS)
+  Tests: Vitest in engine package (no browser/DOM needed)
+  Phaser skills available at .opencode/skills/phaser/<name>/SKILL.md
+  Map format: JSON files parsed by pure function (no I/O in parser)
+  Input: AZERTY keyboard (ZQSD + Arrow keys) + gamepads (up to 4 players, 2+2)
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
