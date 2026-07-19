@@ -94,12 +94,12 @@
 
 ## 12. Client — Rendering
 
-- [ ] 12.1 Implement `ArenaRenderer`: draw walls (coloured bands), pockets (dark circles), zones (tinted floor)
-- [ ] 12.2 Implement `VehicleRenderer`: draw shapes with player colours, apply rotation
-- [ ] 12.3 Implement boost visual effects: glow halo, particle trail, expanding ring
-- [ ] 12.4 Implement boost UI: circular charge indicator (ready/recharging/active)
-- [ ] 12.5 Implement elimination animation: spin + shrink to 0 over 0.5s
-- [ ] 12.6 Implement HUD: round number, player scores, shapes
+- [x] 12.1 Implement `ArenaRenderer`: draw walls (coloured bands), pockets (dark circles), zones (tinted floor)
+- [x] 12.2 Implement `VehicleRenderer`: draw shapes with player colours, apply rotation
+- [x] 12.3 Implement boost visual effects: glow halo, particle trail, expanding ring
+- [x] 12.4 Implement boost UI: circular charge indicator (ready/recharging/active)
+- [x] 12.5 Implement elimination animation: spin + shrink to 0 over 0.5s
+- [x] 12.6 Implement HUD: round number, player scores, shapes
 
 ## 13. Client — Audio
 
