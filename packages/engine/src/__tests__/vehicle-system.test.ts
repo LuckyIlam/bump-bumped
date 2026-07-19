@@ -67,7 +67,7 @@ describe('VehicleSystem', () => {
   })
 
   it('boost transitions: idle → active → recharging → idle', () => {
-    const { engine, vs } = setup()
+    const { vs } = setup()
     const boost = { ...DEFAULT_BOOST_CONFIG, durationMs: 100, cooldownMs: 100 }
 
     vs.register('v1', DEFAULT_VEHICLE_CONFIG, boost)

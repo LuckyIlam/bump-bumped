@@ -1,6 +1,6 @@
 import Matter from 'matter-js'
 import type { CollisionCallback, IPhysicsEngine } from './IPhysicsEngine.js'
-import type { BodyConfig, BodyId, BodyState, CollisionEvent, WallType, WorldConfig, WorldState } from './types.js'
+import type { BodyConfig, BodyId, BodyState, CollisionEvent, VehicleShape, WallType, WorldConfig, WorldState } from './types.js'
 
 const SHAPE_VERTICES: Record<string, (r: number) => { x: number; y: number }[]> = {
   hexagon: (r: number) => {
@@ -33,6 +33,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
   private engine!: Matter.Engine
   private world!: Matter.World
   private bodies: Map<BodyId, Matter.Body> = new Map()
+  private bodyShapes: Map<BodyId, VehicleShape> = new Map()
   private wallBodies: Map<number, WallType> = new Map()
   private collisionCallback: CollisionCallback | null = null
   private pendingEffects: PendingEffect[] = []
@@ -176,6 +177,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     Matter.Body.setAngle(body, config.angle)
     Matter.Composite.add(this.world, body)
     this.bodies.set(config.id, body)
+    this.bodyShapes.set(config.id, config.shape)
 
     return config.id
   }
@@ -185,6 +187,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     if (body) {
       Matter.Composite.remove(this.world, body)
       this.bodies.delete(id)
+      this.bodyShapes.delete(id)
     }
   }
 
@@ -223,7 +226,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
   }
 
   step(delta: number): void {
-    Matter.Engine.update(this.engine, delta * 1000)
+    Matter.Engine.update(this.engine, delta)
   }
 
   onCollision(callback: CollisionCallback): void {
@@ -254,6 +257,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
       velocityX: body.velocity.x,
       velocityY: body.velocity.y,
       angularVelocity: body.angularVelocity,
+      shape: this.bodyShapes.get(id) ?? 'circle',
     }
   }
 }

@@ -5,9 +5,9 @@
   "height": 800,
   "walls": [
     { "x1": 0, "y1": 0, "x2": 1200, "y2": 0, "type": "bounce" },
-    { "x1": 1200, "y1": 0, "x2": 1200, "y2": 800, "type": "bounce" },
-    { "x1": 1200, "y1": 800, "x2": 0, "y2": 800, "type": "bounce" },
-    { "x1": 0, "y1": 800, "x2": 0, "y2": 0, "type": "bounce" }
+    { "x1": 1200, "y1": 0, "x2": 1200, "y2": 800, "type": "reflect" },
+    { "x1": 1200, "y1": 800, "x2": 0, "y2": 800, "type": "amplify" },
+    { "x1": 0, "y1": 800, "x2": 0, "y2": 0, "type": "absorb" }
   ],
   "pockets": [
     { "x": 0, "y": 0, "radius": 35 },
@@ -17,7 +17,11 @@
     { "x": 600, "y": 800, "radius": 35 },
     { "x": 1200, "y": 800, "radius": 35 }
   ],
-  "zones": [],
+  "zones": [
+    { "x": 500, "y": 300, "width": 200, "height": 200, "type": "grip" },
+    { "x": 500, "y": 500, "width": 200, "height": 200, "type": "slick" },
+    { "x": 100, "y": 100, "width": 200, "height": 100, "type": "accelerator" }
+  ],
   "spawns": [
     { "x": 200, "y": 400, "angle": 0 },
     { "x": 1000, "y": 400, "angle": 180 },

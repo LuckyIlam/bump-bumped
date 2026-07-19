@@ -18,12 +18,10 @@ const ZONE_COLORS: Record<string, number> = {
 const WALL_LINE_WIDTH = 4
 
 export class ArenaRenderer {
-  private scene: Phaser.Scene
   private gfx: Phaser.GameObjects.Graphics
   private map: MapData
 
   constructor(scene: Phaser.Scene, map: MapData) {
-    this.scene = scene
     this.map = map
     this.gfx = scene.add.graphics()
   }

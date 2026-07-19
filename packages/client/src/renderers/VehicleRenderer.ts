@@ -7,11 +7,9 @@ const VEHICLE_RADIUS = 14
 const HEADING_LENGTH = 22
 
 export class VehicleRenderer {
-  private scene: Phaser.Scene
   private gfx: Phaser.GameObjects.Graphics
 
   constructor(scene: Phaser.Scene) {
-    this.scene = scene
     this.gfx = scene.add.graphics()
   }
 
@@ -28,7 +26,34 @@ export class VehicleRenderer {
     const { x, y, angle } = body
 
     this.gfx.fillStyle(color, 0.8)
-    this.gfx.fillCircle(x, y, VEHICLE_RADIUS)
+
+    switch (body.shape) {
+      case 'square':
+        this.gfx.fillRect(x - VEHICLE_RADIUS, y - VEHICLE_RADIUS, VEHICLE_RADIUS * 2, VEHICLE_RADIUS * 2)
+        break
+      case 'diamond':
+        this.gfx.fillPoints(
+          [
+            { x, y: y - VEHICLE_RADIUS },
+            { x: x + VEHICLE_RADIUS, y },
+            { x, y: y + VEHICLE_RADIUS },
+            { x: x - VEHICLE_RADIUS, y },
+          ] as Phaser.Math.Vector2[],
+          true,
+        )
+        break
+      case 'hexagon': {
+        const pts: { x: number; y: number }[] = []
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2
+          pts.push({ x: x + Math.cos(a) * VEHICLE_RADIUS, y: y + Math.sin(a) * VEHICLE_RADIUS })
+        }
+        this.gfx.fillPoints(pts as Phaser.Math.Vector2[], true)
+        break
+      }
+      default:
+        this.gfx.fillCircle(x, y, VEHICLE_RADIUS)
+    }
 
     this.gfx.lineStyle(4, 0xffffff, 0.9)
     const tipX = x + Math.cos(angle) * HEADING_LENGTH
@@ -36,6 +61,32 @@ export class VehicleRenderer {
     this.gfx.lineBetween(x, y, tipX, tipY)
 
     this.gfx.lineStyle(3, color, 1)
-    this.gfx.strokeCircle(x, y, VEHICLE_RADIUS)
+    switch (body.shape) {
+      case 'square':
+        this.gfx.strokeRect(x - VEHICLE_RADIUS, y - VEHICLE_RADIUS, VEHICLE_RADIUS * 2, VEHICLE_RADIUS * 2)
+        break
+      case 'diamond':
+        this.gfx.strokePoints(
+          [
+            { x, y: y - VEHICLE_RADIUS },
+            { x: x + VEHICLE_RADIUS, y },
+            { x, y: y + VEHICLE_RADIUS },
+            { x: x - VEHICLE_RADIUS, y },
+          ] as Phaser.Math.Vector2[],
+          true,
+        )
+        break
+      case 'hexagon': {
+        const pts: { x: number; y: number }[] = []
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2
+          pts.push({ x: x + Math.cos(a) * VEHICLE_RADIUS, y: y + Math.sin(a) * VEHICLE_RADIUS })
+        }
+        this.gfx.strokePoints(pts as Phaser.Math.Vector2[], true)
+        break
+      }
+      default:
+        this.gfx.strokeCircle(x, y, VEHICLE_RADIUS)
+    }
   }
 }

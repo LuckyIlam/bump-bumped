@@ -21,7 +21,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules"]
+    "includes": ["**", "!**/dist", "!**/node_modules", "!graphify-out"]
   },
   "overrides": [
     { "includes": ["**/__tests__/**"], "linter": { "rules": { "style": { "noNonNullAssertion": "off" } } } },
