@@ -18,6 +18,8 @@ function vehicle(overrides: Partial<BodyConfig> = {}): BodyConfig {
   }
 }
 
+const TICK = 1000 / 60
+
 describe('Wall behaviours', () => {
   it('bounce wall reflects downward velocity to upward', () => {
     const engine = new MatterPhysicsEngine()
@@ -26,10 +28,10 @@ describe('Wall behaviours', () => {
       height: 600,
       walls: [{ x1: 0, y1: 200, x2: 800, y2: 200, type: 'bounce' }],
     })
-    const id = engine.addBody(vehicle({ x: 400, y: 50 }))
-    engine.setBodyVelocity(id, { x: 0, y: 30 })
-    for (let i = 0; i < 60; i++) {
-      engine.step(1 / 60)
+    const id = engine.addBody(vehicle({ y: 180 }))
+    engine.setBodyVelocity(id, { x: 0, y: 5 })
+    for (let i = 0; i < 30; i++) {
+      engine.step(TICK)
     }
     const state = engine.getBody(id)!
     expect(state.velocityY).toBeLessThan(0)
@@ -42,10 +44,10 @@ describe('Wall behaviours', () => {
       height: 600,
       walls: [{ x1: 0, y1: 200, x2: 800, y2: 200, type: 'absorb' }],
     })
-    const id = engine.addBody(vehicle({ restitution: 0 }))
-    engine.setBodyVelocity(id, { x: 0, y: 30 })
+    const id = engine.addBody(vehicle({ y: 180, restitution: 0 }))
+    engine.setBodyVelocity(id, { x: 0, y: 5 })
     for (let i = 0; i < 30; i++) {
-      engine.step(1 / 60)
+      engine.step(TICK)
     }
     const state = engine.getBody(id)!
     expect(Math.abs(state.velocityY)).toBeLessThan(0.1)
@@ -58,16 +60,16 @@ describe('Wall behaviours', () => {
       height: 600,
       walls: [{ x1: 0, y1: 200, x2: 800, y2: 200, type: 'amplify' }],
     })
-    const id = engine.addBody(vehicle({ restitution: 0 }))
-    engine.setBodyVelocity(id, { x: 0, y: 30 })
+    const id = engine.addBody(vehicle({ y: 180, restitution: 0 }))
+    engine.setBodyVelocity(id, { x: 0, y: 5 })
 
     const vels: number[] = []
-    for (let i = 0; i < 20; i++) {
-      engine.step(1 / 60)
+    for (let i = 0; i < 30; i++) {
+      engine.step(TICK)
       const s = engine.getBody(id)!
       vels.push(s.velocityY)
     }
-    expect(vels.some((v) => Math.abs(v) > 30)).toBe(true)
+    expect(vels.some((v) => Math.abs(v) > 7)).toBe(true)
   })
 
   it('reflect wall bounces elastically preserving parallel velocity', () => {
@@ -77,10 +79,10 @@ describe('Wall behaviours', () => {
       height: 600,
       walls: [{ x1: 0, y1: 200, x2: 800, y2: 200, type: 'reflect' }],
     })
-    const id = engine.addBody(vehicle({ restitution: 0, friction: 0 }))
-    engine.setBodyVelocity(id, { x: 3, y: 30 })
+    const id = engine.addBody(vehicle({ y: 180, restitution: 0, friction: 0 }))
+    engine.setBodyVelocity(id, { x: 3, y: 5 })
     for (let i = 0; i < 30; i++) {
-      engine.step(1 / 60)
+      engine.step(TICK)
     }
     const state = engine.getBody(id)!
     expect(state.velocityY).toBeLessThan(0)

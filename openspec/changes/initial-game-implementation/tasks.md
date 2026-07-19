@@ -61,14 +61,14 @@
 
 ## 8. Engine — GameState
 
-- [ ] 8.1 Implement round system: start, last-man-standing detection, end
-- [ ] 8.2 Implement scoring: placement points (5/3/1/0), bonus points (bumper, bank shot)
-- [ ] 8.3 Implement 3-round match with score accumulation
-- [ ] 8.4 Implement tiebreaker: sudden-death with shrinking arena
-- [ ] 8.5 Implement pocket detection: check vehicle position vs pocket radius after each step
-- [ ] 8.6 Implement elimination: remove body from physics, set player to spectator
-- [ ] 8.7 Implement spawn: place players at map-defined positions with random shape
-- [ ] 8.8 Write unit tests: round flow, scoring, elimination, spawn, 2/3/4 player cases
+- [x] 8.1 Implement round system: start, last-man-standing detection, end
+- [x] 8.2 Implement scoring: placement points (5/3/1/0), bonus points (bumper, bank shot)
+- [x] 8.3 Implement 3-round match with score accumulation
+- [x] 8.4 Implement tiebreaker: sudden-death with shrinking arena
+- [x] 8.5 Implement pocket detection: check vehicle position vs pocket radius after each step
+- [x] 8.6 Implement elimination: remove body from physics, set player to spectator
+- [x] 8.7 Implement spawn: place players at map-defined positions with random shape
+- [x] 8.8 Write unit tests: round flow, scoring, elimination, spawn, 2/3/4 player cases
 
 ## 9. Client — Project Bootstrap
 

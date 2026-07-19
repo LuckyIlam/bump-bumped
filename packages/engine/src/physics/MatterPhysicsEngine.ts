@@ -1,6 +1,6 @@
 import Matter from 'matter-js'
 import type { CollisionCallback, IPhysicsEngine } from './IPhysicsEngine.js'
-import type { BodyConfig, BodyId, BodyState, CollisionEvent, VehicleShape, WallType, WorldConfig, WorldState } from './types.js'
+import type { BodyConfig, BodyId, BodyState, VehicleShape, WallType, WorldConfig, WorldState } from './types.js'
 
 const SHAPE_VERTICES: Record<string, (r: number) => { x: number; y: number }[]> = {
   hexagon: (r: number) => {
@@ -57,6 +57,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
         angle,
         restitution,
         friction: 0,
+        label: 'wall',
       })
       this.wallBodies.set(body.id, wall.type)
       Matter.Composite.add(this.world, body)
@@ -65,9 +66,17 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     Matter.Events.on(this.engine, 'collisionStart', (event: any) => {
       for (const pair of event.pairs) {
         this.queueCollisionEffect(pair)
-      }
-      if (this.collisionCallback && event.pairs.length > 0) {
-        this.collisionCallback({} as CollisionEvent)
+        if (this.collisionCallback) {
+          this.collisionCallback({
+            bodyA: pair.bodyA.label,
+            bodyB: pair.bodyB.label,
+            contactPoint: { x: pair.collision.supports?.[0]?.x ?? 0, y: pair.collision.supports?.[0]?.y ?? 0 },
+            normal: { x: pair.collision.normal.x, y: pair.collision.normal.y },
+            relativeVelocity: Math.sqrt(
+              (pair.bodyA.velocity.x - pair.bodyB.velocity.x) ** 2 + (pair.bodyA.velocity.y - pair.bodyB.velocity.y) ** 2,
+            ),
+          })
+        }
       }
     })
 
