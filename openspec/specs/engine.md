@@ -10,6 +10,8 @@ It must be:
 - **Portable** — runs identically in browser (client) and Node.js (server)
 - **Swappable** — physics backend (Matter.js) can be replaced behind an interface
 
+**Important**: The engine uses the raw `matter-js` npm package directly (`Matter.Engine`, `Matter.Bodies`, etc.), NOT Phaser's `this.matter` plugin. This allows the engine to run on Node.js without Phaser. The Phaser `this.matter` plugin is only used in the client package for rendering visuals that sync with engine state.
+
 ---
 
 ## 2. Architecture
@@ -140,6 +142,15 @@ interface WorldState {
 
 **`amplify` implementation**: Restitution > 1.0 is not physically accurate. Apply a velocity multiplier on collision: `outgoingVelocity = incomingVelocity × 1.5` along the reflection normal.
 
+### Matter.js gotchas
+
+| Gotcha | Impact | Mitigation |
+|--------|--------|------------|
+| `Math.max(bodyA.restitution, bodyB.restitution)` | `absorb` wall (restitution 0) won't absorb if vehicle has restitution > 0 | Override velocity in `collisionStart` handler manually for `absorb` walls |
+| Force values are tiny (0.01-0.1 range) | Naive force values produce no visible movement | Use small constants (0.01-0.05 for normal, 0.05-0.15 for boost). Document in config. |
+| `setBody`/`setRectangle`/etc. resets all properties | Changing shape mid-game would wipe mass, friction, collision filters | Don't change shape at runtime. Assign once at spawn. |
+| Positions are center of mass (not top-left) | Position coordinates differ from Phaser convention | Use center-based positioning everywhere. No offset needed since engine and Phaser both use center. |
+
 ---
 
 ## 5. Vehicle Control
@@ -158,6 +169,7 @@ interface VehicleCommand {
 - **No reverse**: `throttle` is always ≥ 0. When throttle = 0, friction decelerates naturally.
 - **Rotation**: Applied as angular velocity proportional to `turn`. Rate defined in config.
 - **Force application**: Forward force in the direction of the vehicle's current heading angle. Force magnitude = `throttle × maxForce × dt`.
+- **Force scale**: Matter.js forces use very small values (0.01-0.1 range). `maxForce` should be roughly 0.02-0.05 for normal driving and 0.05-0.15 for boost. These are NOT pixel values — tune in playtesting.
 
 ### Boost behaviour
 
@@ -229,6 +241,7 @@ For server-authoritative multiplayer:
 - No `Math.random()` inside the engine — any randomness is seeded externally
 - Matter.js: deterministic when using `Matter.Runner` with fixed delta; verify during integration
 - Vehicle control inputs: timestamped and applied strictly in order
+- In the Phaser client, the engine runs at fixed timestep independently of the render frame rate. The engine's `step()` is called from the game loop at 60Hz, while the renderer interpolates the visual state for smooth display.
 
 ---
 
