@@ -5,6 +5,9 @@ import { GamepadManager } from '../input/GamepadManager.js'
 import { KeyboardManager } from '../input/KeyboardManager.js'
 import classicMapData from '../map-data.json'
 import { ArenaRenderer } from '../renderers/ArenaRenderer.js'
+import { BoostEffects } from '../renderers/BoostEffects.js'
+import { EliminationAnimation } from '../renderers/EliminationAnimation.js'
+import { HUD } from '../renderers/HUD.js'
 import { VehicleRenderer } from '../renderers/VehicleRenderer.js'
 
 const STEP_MS = 1000 / 60
@@ -18,12 +21,16 @@ export class GameScene extends Phaser.Scene {
   private gameState!: GameState
   private arenaRenderer!: ArenaRenderer
   private vehicleRenderer!: VehicleRenderer
+  private boostEffects!: BoostEffects
+  private eliminationAnimation!: EliminationAnimation
+  private hud!: HUD
   private map!: MapData
   private accumulator = 0
   private keyboardManager!: KeyboardManager
   private gamepadManager!: GamepadManager
   private phaseManager = new GamePhaseManager()
   private overlayContainer: Phaser.GameObjects.Container | null = null
+  private prevBodiesSnapshot: { id: string; x: number; y: number; angle: number; shape: string }[] = []
 
   constructor() {
     super('GameScene')
@@ -59,14 +66,23 @@ export class GameScene extends Phaser.Scene {
     this.arenaRenderer.draw()
 
     this.vehicleRenderer = new VehicleRenderer(this)
+    this.boostEffects = new BoostEffects(this)
+    this.eliminationAnimation = new EliminationAnimation(this)
+    this.hud = new HUD(this)
+
+    this.prevBodiesSnapshot = []
 
     this.startCountdown()
   }
 
   update(_time: number, delta: number): void {
+    this.boostEffects.update(delta, this.engine.getBodies(), this.vehicleSystem)
+    this.eliminationAnimation.update(delta)
+
     if (this.phaseManager.phase !== 'playing') {
-      const state = this.engine.getBodies()
-      this.vehicleRenderer.draw(state)
+      this.vehicleRenderer.draw(this.engine.getBodies())
+      this.eliminationAnimation.draw()
+      this.drawHUD()
       return
     }
 
@@ -75,6 +91,14 @@ export class GameScene extends Phaser.Scene {
     while (this.accumulator >= STEP_MS) {
       this.accumulator -= STEP_MS
 
+      this.prevBodiesSnapshot = this.engine.getBodies().map((b) => ({
+        id: b.id,
+        x: b.x,
+        y: b.y,
+        angle: b.angle,
+        shape: b.shape,
+      }))
+
       const commands: VehicleCommand[] = this.collectCommands()
       this.vehicleSystem.update(_time, commands)
       this.engine.step(STEP_MS)
@@ -82,14 +106,31 @@ export class GameScene extends Phaser.Scene {
       this.updateZones()
       this.gameState.update(_time, STEP_MS)
 
+      this.detectEliminations()
+
       if (this.gameState.isRoundEnded()) {
         this.showRoundEnd()
         return
       }
     }
 
-    const state = this.engine.getBodies()
-    this.vehicleRenderer.draw(state)
+    this.vehicleRenderer.draw(this.engine.getBodies())
+    this.eliminationAnimation.draw()
+    this.drawHUD()
+  }
+
+  private detectEliminations(): void {
+    const currentIds = new Set(this.engine.getBodies().map((b) => b.id))
+    for (const prev of this.prevBodiesSnapshot) {
+      if (!currentIds.has(prev.id)) {
+        this.eliminationAnimation.start(prev)
+      }
+    }
+  }
+
+  private drawHUD(): void {
+    const snap = this.gameState.getSnapshot()
+    this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.vehicleSystem)
   }
 
   private startCountdown(): void {
@@ -180,6 +221,7 @@ export class GameScene extends Phaser.Scene {
         this.scene.start('MatchEndScene', { snapshot: this.gameState.getSnapshot() })
       } else {
         this.gameState.startRound()
+        this.eliminationAnimation.clear()
         this.startCountdown()
       }
     })
