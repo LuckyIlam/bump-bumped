@@ -114,7 +114,5 @@
   "114": "VehicleRenderer",
   "115": "MatterPhysicsEngine",
   "116": "BodyId",
-  "118": "VehicleSystem.ts",
-  "119": "zone-system.test.ts",
   "120": "ParticleSystem"
 }

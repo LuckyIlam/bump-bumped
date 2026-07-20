@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "packages/client/src/scenes/GameScene.ts": {
-    "mtime": 1784563739.477613,
-    "ast_hash": "a2cbcdfbe9e076b8ffa23cf44929dfd5",
+    "mtime": 1784565708.8491874,
+    "ast_hash": "8fa99931499f94317fecc56e42469114",
     "semantic_hash": ""
   },
   "packages/client/tsconfig.json": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "openspec/changes/initial-game-implementation/tasks.md": {
-    "mtime": 1784494850.3309748,
-    "ast_hash": "d973c5f8006e09638fa2d2961722bf95",
+    "mtime": 1784565733.589088,
+    "ast_hash": "b2be0b2f60b8db7f4142fc7e02f9a061",
     "semantic_hash": ""
   },
   "openspec/config.yaml": {
@@ -375,18 +375,18 @@
     "semantic_hash": ""
   },
   "packages/client/src/scenes/MatchEndScene.ts": {
-    "mtime": 1784562134.086371,
-    "ast_hash": "cc17d819a628d50a29c05c6fa758a998",
+    "mtime": 1784565674.56336,
+    "ast_hash": "7364d2ec7f6feddb92c11b84c89fec0b",
     "semantic_hash": ""
   },
   "packages/client/src/scenes/MenuScene.ts": {
-    "mtime": 1784562134.086371,
-    "ast_hash": "3401e709057d4ad1e8132536915e41fc",
+    "mtime": 1784565654.2527559,
+    "ast_hash": "5d86afd165f82d685f70882a4c849644",
     "semantic_hash": ""
   },
   "packages/client/src/scenes/PlayerSelectScene.ts": {
-    "mtime": 1784563759.6218789,
-    "ast_hash": "69588c6675d221c801061e6795d4819b",
+    "mtime": 1784565669.711965,
+    "ast_hash": "fb05e886f1b90de2ca5d3c28b5b82c2d",
     "semantic_hash": ""
   },
   "packages/engine/src/__tests__/game-state.test.ts": {
@@ -430,8 +430,63 @@
     "semantic_hash": ""
   },
   "packages/engine/src/config/game-config.ts": {
-    "mtime": 1784564790.9802728,
-    "ast_hash": "df7ff39aaa65fab58bfaff8ae2c1fe99",
+    "mtime": 1784566172.2076888,
+    "ast_hash": "11eb05faa6eb885bfc12baa59d4b7ab0",
+    "semantic_hash": ""
+  },
+  "packages/client/src/audio/SFXManager.ts": {
+    "mtime": 1784565646.8329334,
+    "ast_hash": "0635b48111803e1f585965a1ded646f1",
+    "semantic_hash": ""
+  },
+  "scripts/generate-audio.mjs": {
+    "mtime": 1784565630.5544913,
+    "ast_hash": "683302a9c8b69232043e88272d1fe80e",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/boost.wav": {
+    "mtime": 1784565633.9402213,
+    "ast_hash": "82fab552639ee5ec8b4399eacd9390bd",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/collision.wav": {
+    "mtime": 1784565633.9351935,
+    "ast_hash": "eb4a6f5c58e5b7aa55dcbbf7aa279909",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/countdown.wav": {
+    "mtime": 1784565633.9462872,
+    "ast_hash": "e574e2a5dd8551009bc2d2f3d22fa551",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/elimination.wav": {
+    "mtime": 1784565633.9437773,
+    "ast_hash": "965ecb580a3727bd286e0f140454d416",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/go.wav": {
+    "mtime": 1784565633.947297,
+    "ast_hash": "f96620b8e72771e1f073fbb0bbc6178d",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/matchEnd.wav": {
+    "mtime": 1784565633.9493191,
+    "ast_hash": "4edcd74a27264b4b63062ba937ca2b32",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/menuSelect.wav": {
+    "mtime": 1784565633.9493191,
+    "ast_hash": "52f90dfd8706644535c3e53db6cdcf0d",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/playerReady.wav": {
+    "mtime": 1784565633.9508257,
+    "ast_hash": "3b225642ac57fdc96aa8651db5324a8a",
+    "semantic_hash": ""
+  },
+  "packages/client/public/audio/roundEnd.wav": {
+    "mtime": 1784565633.948311,
+    "ast_hash": "84255270a7c899a5e29b426f87ce4217",
     "semantic_hash": ""
   }
 }
