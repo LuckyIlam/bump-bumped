@@ -1,7 +1,7 @@
 import type { VehicleSystem } from '@bump-bumped/engine'
+import { PLAYER_COLORS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 
-const PLAYER_COLORS: number[] = [0xff3333, 0x3388ff, 0xffcc00, 0x33ff66]
 const BOOST_RADIUS = 7
 const SLOT_GAP = 200
 const HUD_Y = 770

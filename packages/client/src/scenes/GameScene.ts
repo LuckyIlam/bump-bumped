@@ -53,7 +53,8 @@ export class GameScene extends Phaser.Scene {
 
     this.vehicleSystem = new VehicleSystem(this.engine)
     this.zoneSystem = new ZoneSystem(this.map.zones)
-    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map)
+    const playerCount = (this.scene.settings.data as { playerCount?: number })?.playerCount
+    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map, undefined, playerCount)
     this.gameState.startMatch()
 
     this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
@@ -123,7 +124,14 @@ export class GameScene extends Phaser.Scene {
     const currentIds = new Set(this.engine.getBodies().map((b) => b.id))
     for (const prev of this.prevBodiesSnapshot) {
       if (!currentIds.has(prev.id)) {
-        this.eliminationAnimation.start(prev)
+        const hitter = this.gameState.lastVehicleHit.get(prev.id)
+        let scoreText: string | undefined
+        if (hitter) {
+          const bounces = this.gameState.wallBounceCounts.get(prev.id) ?? 0
+          const bonus = bounces >= 2 ? bounces * 2 : 0
+          scoreText = bonus > 0 ? `+${1 + bonus}` : '+1'
+        }
+        this.eliminationAnimation.start(prev, scoreText)
       }
     }
   }

@@ -1,9 +1,7 @@
 import type { BodyState, VehicleSystem } from '@bump-bumped/engine'
+import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 import { ParticleSystem } from './ParticleSystem.js'
-
-const PLAYER_COLORS: number[] = [0xff3333, 0x3388ff, 0xffcc00, 0x33ff66]
-const VEHICLE_RADIUS = 28
 
 interface Ring {
   x: number
@@ -19,6 +17,7 @@ export class BoostEffects {
   private prevBoostState = new Map<string, string>()
   private rings: Ring[] = []
   private particleSystem: ParticleSystem
+  private elapsed = 0
 
   constructor(scene: Phaser.Scene) {
     this.gfx = scene.add.graphics().setDepth(2)
@@ -27,6 +26,7 @@ export class BoostEffects {
   }
 
   update(delta: number, bodies: BodyState[], vehicleSystem: VehicleSystem): void {
+    this.elapsed += delta
     this.particleSystem.update(delta)
 
     for (let i = this.rings.length - 1; i >= 0; i--) {
@@ -59,6 +59,12 @@ export class BoostEffects {
       }
 
       this.prevBoostState.set(body.id, boostState)
+
+      if (boostState === 'idle' && vehicleSystem.getBoostProgress(body.id) >= 1) {
+        const pulse = 0.5 + 0.5 * Math.sin(this.elapsed * 0.006)
+        this.gfx.fillStyle(color, pulse * 0.12)
+        this.gfx.fillCircle(body.x, body.y, VEHICLE_RADIUS * 1.8)
+      }
 
       if (boostState === 'active') {
         this.gfx.fillStyle(color, 0.12)

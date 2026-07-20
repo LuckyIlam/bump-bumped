@@ -13,9 +13,9 @@ export interface VehicleConfig {
 }
 
 export const DEFAULT_VEHICLE_CONFIG: VehicleConfig = {
-  maxForce: 0.05,
-  maxTurnSpeed: 0.08,
-  baseFrictionAir: 0.02,
+  maxForce: 0.15,
+  maxTurnSpeed: 0.12,
+  baseFrictionAir: 0.01,
 }
 
 export class VehicleSystem {
@@ -23,7 +23,7 @@ export class VehicleSystem {
   private bodies: Map<BodyId, { config: VehicleConfig; boost: BoostConfig; boostState: BoostState }> = new Map()
   private timestamps: Map<BodyId, number> = new Map()
   private zoneMods: Map<BodyId, { frictionMul: number; maxSpeedMul: number; turnMul: number }> = new Map()
-  private baseMaxSpeed = 20
+  private baseMaxSpeed = 40
 
   constructor(engine: IPhysicsEngine) {
     this.engine = engine
