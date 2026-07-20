@@ -1,5 +1,6 @@
 import type { BoostConfig } from '../config/boost-config.js'
 import { DEFAULT_BOOST_CONFIG } from '../config/boost-config.js'
+import { VEHICLE_BASE_FRICTION_AIR, VEHICLE_BASE_MAX_SPEED, VEHICLE_MAX_FORCE, VEHICLE_MAX_TURN_SPEED } from '../config/game-config.js'
 import type { VehicleCommand } from '../input/VehicleCommand.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import type { BodyId } from '../physics/types.js'
@@ -13,9 +14,9 @@ export interface VehicleConfig {
 }
 
 export const DEFAULT_VEHICLE_CONFIG: VehicleConfig = {
-  maxForce: 0.15,
-  maxTurnSpeed: 0.12,
-  baseFrictionAir: 0.01,
+  maxForce: VEHICLE_MAX_FORCE,
+  maxTurnSpeed: VEHICLE_MAX_TURN_SPEED,
+  baseFrictionAir: VEHICLE_BASE_FRICTION_AIR,
 }
 
 export class VehicleSystem {
@@ -23,7 +24,6 @@ export class VehicleSystem {
   private bodies: Map<BodyId, { config: VehicleConfig; boost: BoostConfig; boostState: BoostState }> = new Map()
   private timestamps: Map<BodyId, number> = new Map()
   private zoneMods: Map<BodyId, { frictionMul: number; maxSpeedMul: number; turnMul: number }> = new Map()
-  private baseMaxSpeed = 40
 
   constructor(engine: IPhysicsEngine) {
     this.engine = engine
@@ -105,7 +105,7 @@ export class VehicleSystem {
   postStep(): void {
     for (const [id] of this.bodies) {
       const zoneMod = this.zoneMods.get(id)
-      const maxSpeed = this.baseMaxSpeed * (zoneMod?.maxSpeedMul ?? 1)
+      const maxSpeed = VEHICLE_BASE_MAX_SPEED * (zoneMod?.maxSpeedMul ?? 1)
 
       const state = this.engine.getBody(id)
       if (!state) continue

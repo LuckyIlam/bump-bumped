@@ -1,4 +1,14 @@
-export { PLAYER_COLORS, VEHICLE_RADIUS } from './config/game-config.js'
+export {
+  BODY_FRICTION,
+  BODY_MASS,
+  BODY_RESTITUTION,
+  PLAYER_COLORS,
+  VEHICLE_BASE_FRICTION_AIR,
+  VEHICLE_BASE_MAX_SPEED,
+  VEHICLE_MAX_FORCE,
+  VEHICLE_MAX_TURN_SPEED,
+  VEHICLE_RADIUS,
+} from './config/game-config.js'
 export type { VehicleCommand } from './input/VehicleCommand.js'
 export { parseMap } from './map/parser.js'
 export type { MapData, Pocket, Result, SpawnPoint } from './map/types.js'

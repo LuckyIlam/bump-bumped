@@ -1,4 +1,4 @@
-import { VEHICLE_RADIUS } from '../config/game-config.js'
+import { BODY_FRICTION, BODY_MASS, BODY_RESTITUTION, VEHICLE_RADIUS } from '../config/game-config.js'
 import type { MapData } from '../map/types.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import type { BodyId, CollisionEvent, VehicleShape } from '../physics/types.js'
@@ -170,9 +170,9 @@ export class GameState {
         x: spawn.x,
         y: spawn.y,
         angle: (spawn.angle * Math.PI) / 180,
-        mass: 1,
-        restitution: 0.8,
-        friction: 0.1,
+        mass: BODY_MASS,
+        restitution: BODY_RESTITUTION,
+        friction: BODY_FRICTION,
       })
       this.vehicleSystem.register(player.id)
     }
