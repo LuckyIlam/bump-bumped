@@ -1,6 +1,7 @@
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
 import { GamePhaseManager, GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
 import Phaser from 'phaser'
+import { SFXManager } from '../audio/SFXManager.js'
 import { GamepadManager } from '../input/GamepadManager.js'
 import { KeyboardManager } from '../input/KeyboardManager.js'
 import classicMapData from '../map-data.json'
@@ -31,6 +32,8 @@ export class GameScene extends Phaser.Scene {
   private phaseManager = new GamePhaseManager()
   private overlayContainer: Phaser.GameObjects.Container | null = null
   private prevBodiesSnapshot: { id: string; x: number; y: number; angle: number; shape: string }[] = []
+  private sfx!: SFXManager
+  private prevBoostStates = new Map<string, string>()
 
   constructor() {
     super('GameScene')
@@ -71,7 +74,17 @@ export class GameScene extends Phaser.Scene {
     this.eliminationAnimation = new EliminationAnimation(this)
     this.hud = new HUD(this)
 
+    this.sfx = new SFXManager(this)
+
+    this.engine.onCollision((event) => {
+      const isVehicleCollision = event.bodyA.startsWith('vehicle_') && event.bodyB.startsWith('vehicle_')
+      if (isVehicleCollision) {
+        this.sfx.playCollision(Math.min(event.relativeVelocity / 15, 0.5))
+      }
+    })
+
     this.prevBodiesSnapshot = []
+    this.prevBoostStates.clear()
 
     this.startCountdown()
   }
@@ -79,6 +92,8 @@ export class GameScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     this.boostEffects.update(delta, this.engine.getBodies(), this.vehicleSystem)
     this.eliminationAnimation.update(delta)
+
+    this.detectBoostActivation()
 
     if (this.phaseManager.phase !== 'playing') {
       this.vehicleRenderer.draw(this.engine.getBodies())
@@ -132,7 +147,20 @@ export class GameScene extends Phaser.Scene {
           scoreText = bonus > 0 ? `+${1 + bonus}` : '+1'
         }
         this.eliminationAnimation.start(prev, scoreText)
+        this.sfx.playElimination()
       }
+    }
+  }
+
+  private detectBoostActivation(): void {
+    for (const body of this.engine.getBodies()) {
+      const state = this.vehicleSystem.getBoostState(body.id)
+      if (!state) continue
+      const prev = this.prevBoostStates.get(body.id) ?? 'idle'
+      if (prev !== 'active' && state === 'active') {
+        this.sfx.playBoost()
+      }
+      this.prevBoostStates.set(body.id, state)
     }
   }
 
@@ -155,6 +183,12 @@ export class GameScene extends Phaser.Scene {
 
     for (const step of steps) {
       this.time.delayedCall(step.delay, () => {
+        if (step.text === 'GO!') {
+          this.sfx.playGo()
+        } else {
+          this.sfx.playCountdown()
+        }
+
         const t = this.add
           .text(cx, cy, step.text, {
             fontSize: '72px',
@@ -179,6 +213,7 @@ export class GameScene extends Phaser.Scene {
   private showRoundEnd(): void {
     const snap = this.gameState.getSnapshot()
     const info = this.phaseManager.onRoundEnded(snap)
+    this.sfx.playRoundEnd()
     const cx = this.scale.width / 2
     const cy = this.scale.height / 2
 

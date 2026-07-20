@@ -1,8 +1,16 @@
 import Phaser from 'phaser'
+import { SFXManager } from '../audio/SFXManager.js'
 
 export class MenuScene extends Phaser.Scene {
+  private sfx!: SFXManager
+
   constructor() {
     super('MenuScene')
+  }
+
+  preload(): void {
+    this.sfx = new SFXManager(this)
+    this.sfx.preload()
   }
 
   create(): void {
@@ -27,6 +35,7 @@ export class MenuScene extends Phaser.Scene {
     const kb = this.input.keyboard
     if (kb) {
       kb.once('keydown', () => {
+        this.sfx.playMenuSelect()
         this.scene.start('PlayerSelectScene')
       })
     }
@@ -34,6 +43,7 @@ export class MenuScene extends Phaser.Scene {
     const gp = this.input.gamepad
     if (gp) {
       gp.once('down', () => {
+        this.sfx.playMenuSelect()
         this.scene.start('PlayerSelectScene')
       })
     }
