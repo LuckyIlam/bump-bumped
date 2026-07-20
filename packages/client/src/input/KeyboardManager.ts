@@ -32,7 +32,7 @@ export class KeyboardManager {
       throttle: cursors.up,
       turnLeft: cursors.left,
       turnRight: cursors.right,
-      boost: cursors.shift,
+      boost: kb.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL),
     }
   }
 

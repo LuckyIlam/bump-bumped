@@ -1,7 +1,5 @@
+import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
-
-const PLAYER_COLORS: number[] = [0xff3333, 0x3388ff, 0xffcc00, 0x33ff66]
-const VEHICLE_RADIUS = 28
 
 interface Elimination {
   x: number
@@ -23,12 +21,13 @@ interface EliminationBody {
 export class EliminationAnimation {
   private gfx: Phaser.GameObjects.Graphics
   private anims: Elimination[] = []
+  private scorePops: { text: Phaser.GameObjects.Text; vy: number; alpha: number }[] = []
 
-  constructor(scene: Phaser.Scene) {
+  constructor(private scene: Phaser.Scene) {
     this.gfx = scene.add.graphics().setDepth(3)
   }
 
-  start(body: EliminationBody): void {
+  start(body: EliminationBody, scoreText?: string): void {
     const idx = parseInt(body.id.replace('vehicle_', ''), 10)
     const color = PLAYER_COLORS[idx % PLAYER_COLORS.length]
     this.anims.push({
@@ -39,6 +38,20 @@ export class EliminationAnimation {
       color,
       progress: 0,
     })
+
+    if (scoreText) {
+      const t = this.scene.add
+        .text(body.x, body.y - 10, scoreText, {
+          fontSize: '18px',
+          color: '#ffffff',
+          fontFamily: 'monospace',
+          stroke: '#000000',
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setDepth(4)
+      this.scorePops.push({ text: t, vy: -0.5, alpha: 1 })
+    }
   }
 
   update(delta: number): void {
@@ -47,6 +60,17 @@ export class EliminationAnimation {
       a.angle += delta * 0.012
     }
     this.anims = this.anims.filter((a) => a.progress < 1)
+
+    for (let i = this.scorePops.length - 1; i >= 0; i--) {
+      const pop = this.scorePops[i]
+      pop.text.y += pop.vy * (delta / 16)
+      pop.alpha -= delta * 0.002
+      pop.text.setAlpha(pop.alpha)
+      if (pop.alpha <= 0) {
+        pop.text.destroy()
+        this.scorePops.splice(i, 1)
+      }
+    }
   }
 
   draw(): void {
@@ -103,5 +127,9 @@ export class EliminationAnimation {
 
   clear(): void {
     this.anims = []
+    for (const pop of this.scorePops) {
+      pop.text.destroy()
+    }
+    this.scorePops = []
   }
 }

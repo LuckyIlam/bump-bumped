@@ -18,6 +18,9 @@ const SLOTS = [
 export class PlayerSelectScene extends Phaser.Scene {
   private statusTexts: Phaser.GameObjects.Text[] = []
   private slotDeviceTexts: Phaser.GameObjects.Text[] = []
+  private countdownText: Phaser.GameObjects.Text | null = null
+  private autoStartCountdown = -1
+  private hasAutoStarted = false
 
   constructor() {
     super('PlayerSelectScene')
@@ -53,6 +56,37 @@ export class PlayerSelectScene extends Phaser.Scene {
       .setOrigin(0.5)
 
     this.setupInput()
+  }
+
+  update(): void {
+    if (this.hasAutoStarted) return
+
+    const readyCount = this.statusTexts.filter((t) => t.text === 'PRÊT').length
+    if (readyCount < 2) return
+
+    if (this.autoStartCountdown < 0) {
+      this.autoStartCountdown = 180
+    }
+
+    this.autoStartCountdown--
+    const sec = Math.ceil(this.autoStartCountdown / 60)
+    if (!this.countdownText) {
+      const { width, height } = this.scale
+      this.countdownText = this.add
+        .text(width / 2, height - 120, `Démarrage dans ${sec}...`, {
+          fontSize: '20px',
+          color: '#ffff88',
+          fontFamily: 'monospace',
+        })
+        .setOrigin(0.5)
+    } else {
+      this.countdownText.setText(`Démarrage dans ${sec}...`)
+    }
+
+    if (this.autoStartCountdown === 0) {
+      this.hasAutoStarted = true
+      this.startGame()
+    }
   }
 
   private drawSlots(width: number): void {
@@ -137,6 +171,7 @@ export class PlayerSelectScene extends Phaser.Scene {
   }
 
   private startGame(): void {
-    this.scene.start('GameScene')
+    const readyCount = this.statusTexts.filter((t) => t.text === 'PRÊT').length
+    this.scene.start('GameScene', { playerCount: readyCount })
   }
 }

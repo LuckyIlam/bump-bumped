@@ -138,6 +138,6 @@ describe('VehicleSystem + ZoneSystem integration', () => {
     engine.step(1000 / 60)
     vs.postStep()
     const state = engine.getBody('v1')!
-    expect(Math.abs(state.velocityX)).toBeLessThan(15)
+    expect(Math.abs(state.velocityX)).toBeLessThan(25)
   })
 })

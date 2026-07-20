@@ -1,3 +1,4 @@
+export { PLAYER_COLORS, VEHICLE_RADIUS } from './config/game-config.js'
 export type { VehicleCommand } from './input/VehicleCommand.js'
 export { parseMap } from './map/parser.js'
 export type { MapData, Pocket, Result, SpawnPoint } from './map/types.js'
