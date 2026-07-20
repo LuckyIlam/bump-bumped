@@ -107,11 +107,5 @@
   "105": "Classic map (1200x800, 6 pockets)",
   "106": "Map JSON schema",
   "107": "vite.config.ts",
-  "108": "vitest.config.ts",
-  "109": "BoostEffects.ts",
-  "110": "EliminationAnimation",
-  "111": "ArenaRenderer",
-  "112": "HUD.ts",
-  "113": "GameScene",
-  "114": "VehicleRenderer"
+  "108": "vitest.config.ts"
 }
