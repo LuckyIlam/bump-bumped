@@ -162,7 +162,7 @@ export class GameState {
         id: player.id,
         type: 'vehicle',
         shape,
-        radius: 14,
+        radius: 28,
         x: spawn.x,
         y: spawn.y,
         angle: (spawn.angle * Math.PI) / 180,
