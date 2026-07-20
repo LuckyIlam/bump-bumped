@@ -1,10 +1,12 @@
 import type { GameStateSnapshot } from '@bump-bumped/engine'
 import Phaser from 'phaser'
+import { SFXManager } from '../audio/SFXManager.js'
 
 const COLORS = ['#ff3333', '#3388ff', '#ffcc00', '#33ff66']
 
 export class MatchEndScene extends Phaser.Scene {
   private snapshot!: GameStateSnapshot
+  private sfx!: SFXManager
 
   constructor() {
     super('MatchEndScene')
@@ -15,6 +17,8 @@ export class MatchEndScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.sfx = new SFXManager(this)
+    this.sfx.playMatchEnd()
     const { width, height } = this.scale
 
     this.add

@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { SFXManager } from '../audio/SFXManager.js'
 
 const SLOT_COLORS = [0xff3333, 0x3388ff, 0xffcc00, 0x33ff66]
 const SLOT_COLOR_STRS = ['#ff3333', '#3388ff', '#ffcc00', '#33ff66']
@@ -21,12 +22,15 @@ export class PlayerSelectScene extends Phaser.Scene {
   private countdownText: Phaser.GameObjects.Text | null = null
   private autoStartCountdown = -1
   private hasAutoStarted = false
+  private sfx!: SFXManager
+  private prevReadyCount = 0
 
   constructor() {
     super('PlayerSelectScene')
   }
 
   create(): void {
+    this.sfx = new SFXManager(this)
     const { width, height } = this.scale
 
     this.add
@@ -62,6 +66,11 @@ export class PlayerSelectScene extends Phaser.Scene {
     if (this.hasAutoStarted) return
 
     const readyCount = this.statusTexts.filter((t) => t.text === 'PRÊT').length
+    if (readyCount > this.prevReadyCount) {
+      this.sfx.playPlayerReady()
+    }
+    this.prevReadyCount = readyCount
+
     if (readyCount < 2) return
 
     if (this.autoStartCountdown < 0) {
@@ -172,6 +181,7 @@ export class PlayerSelectScene extends Phaser.Scene {
 
   private startGame(): void {
     const readyCount = this.statusTexts.filter((t) => t.text === 'PRÊT').length
+    this.sfx.playMenuSelect()
     this.scene.start('GameScene', { playerCount: readyCount })
   }
 }

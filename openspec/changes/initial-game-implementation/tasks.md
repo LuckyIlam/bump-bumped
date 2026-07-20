@@ -103,8 +103,8 @@
 
 ## 13. Client — Audio
 
-- [ ] 13.1 Implement `SFXManager`: load and play sound effects
-- [ ] 13.2 Wire sounds to events: collisions, boost, elimination, countdown, round/match end
+- [x] 13.1 Implement `SFXManager`: load and play sound effects
+- [x] 13.2 Wire sounds to events: collisions, boost, elimination, countdown, round/match end
 
 ## 14. Determinism Verification
 
