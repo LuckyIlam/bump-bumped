@@ -3,8 +3,8 @@ import type Phaser from 'phaser'
 
 const PLAYER_COLORS: number[] = [0xff3333, 0x3388ff, 0xffcc00, 0x33ff66]
 
-const VEHICLE_RADIUS = 14
-const HEADING_LENGTH = 22
+const VEHICLE_RADIUS = 28
+const HEADING_LENGTH = 44
 
 export class VehicleRenderer {
   private gfx: Phaser.GameObjects.Graphics
