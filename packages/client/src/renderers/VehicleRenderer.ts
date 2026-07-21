@@ -1,5 +1,5 @@
 import type { BodyState } from '@bump-bumped/engine'
-import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
+import { PLAYER_COLORS, VEHICLE_RADIUS, vehicleIndex } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 import { fillVehicleShape, strokeVehicleShape } from '../shapes/VehicleShapeDrawer.js'
 
@@ -16,7 +16,7 @@ export class VehicleRenderer {
     this.gfx.clear()
 
     for (const body of bodies) {
-      const color = PLAYER_COLORS[parseInt(body.id.replace('vehicle_', ''), 10) % PLAYER_COLORS.length]
+      const color = PLAYER_COLORS[vehicleIndex(body.id) % PLAYER_COLORS.length]
       this.drawVehicle(body, color)
     }
   }

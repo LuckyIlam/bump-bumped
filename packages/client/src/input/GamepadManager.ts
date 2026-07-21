@@ -1,4 +1,5 @@
 import type { VehicleCommand } from '@bump-bumped/engine'
+import { vehicleId } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 
 const THROTTLE_DEAD_ZONE = 0.15
@@ -27,7 +28,7 @@ export class GamepadManager {
       const boost = pad.A
 
       commands.push({
-        vehicleId: `vehicle_${i + 2}`,
+        vehicleId: vehicleId(i + 2),
         throttle,
         turn: turnAx,
         boost,

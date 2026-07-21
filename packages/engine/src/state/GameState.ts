@@ -6,6 +6,7 @@ import type { BodyId, VehicleShape } from '../physics/types.js'
 import type { VehicleSystem } from '../systems/VehicleSystem.js'
 import { CollisionTracker } from './CollisionTracker.js'
 import { ScoringService } from './ScoringService.js'
+import { vehicleId } from './VehicleId.js'
 
 const VEHICLE_SHAPES: VehicleShape[] = ['circle', 'square', 'diamond', 'hexagon']
 
@@ -108,7 +109,7 @@ export class GameState {
     this.players = []
     for (let i = 0; i < this.playerCount; i++) {
       this.players.push({
-        id: `vehicle_${i}`,
+        id: vehicleId(i),
         index: i,
         colorIndex: i,
         shape: 'circle',
