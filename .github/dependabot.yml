@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directories:
+      - '/'
+      - '/packages/engine'
+      - '/packages/client'
+    schedule:
+      interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      phaser:
+        patterns:
+          - 'phaser'
+      biome:
+        patterns:
+          - '@biomejs/*'
+      husky:
+        patterns:
+          - 'husky'
+          - 'lint-staged'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    commit-message:
+      prefix: 'chore(deps)'
