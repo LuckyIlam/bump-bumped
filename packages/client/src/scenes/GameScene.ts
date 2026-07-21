@@ -1,5 +1,5 @@
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
-import { EventBus, GamePhaseManager, GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
+import { GameEngine, GamePhaseManager, parseMap } from '@bump-bumped/engine'
 import Phaser from 'phaser'
 import { SFXManager } from '../audio/SFXManager.js'
 import { GamepadManager } from '../input/GamepadManager.js'
@@ -16,11 +16,7 @@ const STEP_MS = 1000 / 60
 const OVERLAY_COLORS = ['#ff3333', '#3388ff', '#ffcc00', '#33ff66']
 
 export class GameScene extends Phaser.Scene {
-  private engine!: MatterPhysicsEngine
-  private vehicleSystem!: VehicleSystem
-  private zoneSystem!: ZoneSystem
-  private gameState!: GameState
-  private eventBus!: EventBus
+  private gameEngine!: GameEngine
   private arenaRenderer!: ArenaRenderer
   private vehicleRenderer!: VehicleRenderer
   private boostEffects!: BoostEffects
@@ -45,21 +41,8 @@ export class GameScene extends Phaser.Scene {
     }
     this.map = result.value
 
-    this.engine = new MatterPhysicsEngine()
-    this.engine.createWorld({
-      width: this.map.width,
-      height: this.map.height,
-      walls: this.map.walls,
-      zones: this.map.zones,
-    })
-
-    this.eventBus = new EventBus()
-
-    this.vehicleSystem = new VehicleSystem(this.engine, this.eventBus)
-    this.zoneSystem = new ZoneSystem(this.map.zones)
     const playerCount = (this.scene.settings.data as { playerCount?: number })?.playerCount
-    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map, undefined, playerCount, this.eventBus)
-    this.gameState.startMatch()
+    this.gameEngine = new GameEngine(this.map, playerCount)
 
     this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
     this.cameras.main.setScroll(0, 0)
@@ -77,7 +60,7 @@ export class GameScene extends Phaser.Scene {
 
     this.sfx = new SFXManager(this)
 
-    this.eventBus.on((event) => {
+    this.gameEngine.eventBus.on((event) => {
       switch (event.type) {
         case 'elimination':
           this.eliminationAnimation.start(
@@ -99,11 +82,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
-    this.boostEffects.update(delta, this.engine.getBodies(), this.vehicleSystem)
+    this.boostEffects.update(delta, this.gameEngine.getBodies(), this.gameEngine.vehicleSystem)
     this.eliminationAnimation.update(delta)
 
     if (this.phaseManager.phase !== 'playing') {
-      this.vehicleRenderer.draw(this.engine.getBodies())
+      this.vehicleRenderer.draw(this.gameEngine.getBodies())
       this.eliminationAnimation.draw()
       this.drawHUD()
       return
@@ -115,26 +98,22 @@ export class GameScene extends Phaser.Scene {
       this.accumulator -= STEP_MS
 
       const commands: VehicleCommand[] = this.collectCommands()
-      this.vehicleSystem.update(_time, commands)
-      this.engine.step(STEP_MS)
-      this.vehicleSystem.postStep()
-      this.updateZones()
-      this.gameState.update(_time, STEP_MS)
+      this.gameEngine.step(_time, STEP_MS, commands)
 
-      if (this.gameState.isRoundEnded()) {
+      if (this.gameEngine.isRoundEnded()) {
         this.showRoundEnd()
         return
       }
     }
 
-    this.vehicleRenderer.draw(this.engine.getBodies())
+    this.vehicleRenderer.draw(this.gameEngine.getBodies())
     this.eliminationAnimation.draw()
     this.drawHUD()
   }
 
   private drawHUD(): void {
-    const snap = this.gameState.getSnapshot()
-    this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.vehicleSystem)
+    const snap = this.gameEngine.getSnapshot()
+    this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.gameEngine.vehicleSystem)
   }
 
   private startCountdown(): void {
@@ -179,7 +158,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private showRoundEnd(): void {
-    const snap = this.gameState.getSnapshot()
+    const snap = this.gameEngine.getSnapshot()
     const info = this.phaseManager.onRoundEnded(snap)
     this.sfx.playRoundEnd()
     const cx = this.scale.width / 2
@@ -226,12 +205,12 @@ export class GameScene extends Phaser.Scene {
       this.overlayContainer?.destroy(true)
       this.overlayContainer = null
 
-      const action = this.phaseManager.dismissOverlay(this.gameState.isMatchFinished())
+      const action = this.phaseManager.dismissOverlay(this.gameEngine.isMatchFinished())
 
       if (action === 'matchEnd') {
-        this.scene.start('MatchEndScene', { snapshot: this.gameState.getSnapshot() })
+        this.scene.start('MatchEndScene', { snapshot: this.gameEngine.getSnapshot() })
       } else {
-        this.gameState.startRound()
+        this.gameEngine.startNewRound()
         this.eliminationAnimation.clear()
         this.startCountdown()
       }
@@ -250,12 +229,5 @@ export class GameScene extends Phaser.Scene {
     }
 
     return commands
-  }
-
-  private updateZones(): void {
-    for (const state of this.engine.getBodies()) {
-      const mod = this.zoneSystem.getModifierAt(state.x, state.y)
-      this.vehicleSystem.setZoneModifiers(state.id, mod.frictionMultiplier, mod.maxSpeedMultiplier, mod.turnRateMultiplier)
-    }
   }
 }
