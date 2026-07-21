@@ -1,4 +1,5 @@
 import { BODY_FRICTION, BODY_MASS, BODY_RESTITUTION, VEHICLE_RADIUS } from '../config/game-config.js'
+import type { EventBus } from '../events/EventBus.js'
 import type { MapData } from '../map/types.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import type { BodyId, CollisionEvent, VehicleShape } from '../physics/types.js'
@@ -55,18 +56,27 @@ export class GameState {
   private vehicleSystem: VehicleSystem
   private map: MapData
   private randomizer: ShapeRandomizer
+  private eventBus?: EventBus
   wallBounceCounts: Map<BodyId, number> = new Map()
   lastVehicleHit: Map<BodyId, BodyId | null> = new Map()
   private roundNumber = 0
 
   private playerCount: number
 
-  constructor(engine: IPhysicsEngine, vehicleSystem: VehicleSystem, map: MapData, randomizer?: ShapeRandomizer, playerCount?: number) {
+  constructor(
+    engine: IPhysicsEngine,
+    vehicleSystem: VehicleSystem,
+    map: MapData,
+    randomizer?: ShapeRandomizer,
+    playerCount?: number,
+    eventBus?: EventBus,
+  ) {
     this.engine = engine
     this.vehicleSystem = vehicleSystem
     this.map = map
     this.randomizer = randomizer ?? defaultRandomizer
     this.playerCount = playerCount ?? map.spawns.length
+    this.eventBus = eventBus
 
     this.match = {
       currentRound: 0,
@@ -97,11 +107,14 @@ export class GameState {
 
     if (aIsVehicle && bIsWall) {
       this.wallBounceCounts.set(bodyA, (this.wallBounceCounts.get(bodyA) ?? 0) + 1)
+      this.eventBus?.emit({ type: 'wallBounce', bodyId: bodyA })
     } else if (bIsVehicle && aIsWall) {
       this.wallBounceCounts.set(bodyB, (this.wallBounceCounts.get(bodyB) ?? 0) + 1)
+      this.eventBus?.emit({ type: 'wallBounce', bodyId: bodyB })
     } else if (aIsVehicle && bIsVehicle) {
       this.lastVehicleHit.set(bodyA, bodyB)
       this.lastVehicleHit.set(bodyB, bodyA)
+      this.eventBus?.emit({ type: 'vehicleCollision', bodyA, bodyB, relativeVelocity: event.relativeVelocity })
     }
   }
 
@@ -208,6 +221,8 @@ export class GameState {
     const player = this.players.find((p) => p.id === bodyId)
     if (!player?.alive) return
 
+    const bodyState = this.engine.getBody(bodyId)
+
     const hitter = this.lastVehicleHit.get(bodyId)
     if (hitter) {
       const hitterPlayer = this.players.find((p) => p.id === hitter)
@@ -222,6 +237,16 @@ export class GameState {
     this.round.aliveCount--
     this.round.eliminationOrder.push(bodyId)
     player.eliminationOrder = this.round.eliminationOrder.length
+
+    this.eventBus?.emit({
+      type: 'elimination',
+      bodyId,
+      hitter: hitter ?? null,
+      bounces: this.wallBounceCounts.get(bodyId) ?? 0,
+      position: bodyState ? { x: bodyState.x, y: bodyState.y } : { x: 0, y: 0 },
+      shape: player.shape,
+      colorIndex: player.colorIndex,
+    })
 
     this.engine.removeBody(bodyId)
     this.vehicleSystem.unregister(bodyId)
@@ -245,6 +270,8 @@ export class GameState {
 
     this.awardPoints()
     this.checkMatchEnd()
+
+    this.eventBus?.emit({ type: 'roundEnd', snapshot: this.getSnapshot() })
   }
 
   private awardPoints(): void {
@@ -283,6 +310,7 @@ export class GameState {
       this.match.phase = 'finished'
       const sorted = [...this.players].sort((a, b) => b.score - a.score)
       this.match.winner = sorted[0].id
+      this.eventBus?.emit({ type: 'matchEnd', winner: this.match.winner })
       return
     }
 
@@ -296,6 +324,7 @@ export class GameState {
       } else {
         this.match.phase = 'finished'
         this.match.winner = sorted[0].id
+        this.eventBus?.emit({ type: 'matchEnd', winner: this.match.winner })
       }
     }
   }

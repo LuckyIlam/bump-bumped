@@ -1,6 +1,7 @@
 import type { BoostConfig } from '../config/boost-config.js'
 import { DEFAULT_BOOST_CONFIG } from '../config/boost-config.js'
 import { VEHICLE_BASE_FRICTION_AIR, VEHICLE_BASE_MAX_SPEED, VEHICLE_MAX_FORCE, VEHICLE_MAX_TURN_SPEED } from '../config/game-config.js'
+import type { EventBus } from '../events/EventBus.js'
 import type { VehicleCommand } from '../input/VehicleCommand.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import type { BodyId } from '../physics/types.js'
@@ -21,12 +22,14 @@ export const DEFAULT_VEHICLE_CONFIG: VehicleConfig = {
 
 export class VehicleSystem {
   private engine: IPhysicsEngine
+  private eventBus?: EventBus
   private bodies: Map<BodyId, { config: VehicleConfig; boost: BoostConfig; boostState: BoostState }> = new Map()
   private timestamps: Map<BodyId, number> = new Map()
   private zoneMods: Map<BodyId, { frictionMul: number; maxSpeedMul: number; turnMul: number }> = new Map()
 
-  constructor(engine: IPhysicsEngine) {
+  constructor(engine: IPhysicsEngine, eventBus?: EventBus) {
     this.engine = engine
+    this.eventBus = eventBus
   }
 
   register(id: BodyId, config?: VehicleConfig, boost?: BoostConfig): void {
@@ -82,7 +85,12 @@ export class VehicleSystem {
       const { config, boost, boostState } = entry
       const zoneMod = this.zoneMods.get(cmd.vehicleId)
 
+      const prevPhase = boostState.phase
       const phase = updateBoostPhase(boostState, now, cmd.boost, boost.durationMs, boost.cooldownMs)
+
+      if (prevPhase !== 'active' && phase === 'active') {
+        this.eventBus?.emit({ type: 'boostActivation', bodyId: cmd.vehicleId })
+      }
 
       const throttle = Math.max(0, cmd.throttle) * (phase === 'active' ? boost.speedMultiplier : 1)
       let turnRate = cmd.turn * (phase === 'active' ? boost.turnRateMultiplier : 1)

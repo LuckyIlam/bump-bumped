@@ -1,5 +1,5 @@
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
-import { GamePhaseManager, GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
+import { EventBus, GamePhaseManager, GameState, MatterPhysicsEngine, parseMap, VehicleSystem, ZoneSystem } from '@bump-bumped/engine'
 import Phaser from 'phaser'
 import { SFXManager } from '../audio/SFXManager.js'
 import { GamepadManager } from '../input/GamepadManager.js'
@@ -20,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private vehicleSystem!: VehicleSystem
   private zoneSystem!: ZoneSystem
   private gameState!: GameState
+  private eventBus!: EventBus
   private arenaRenderer!: ArenaRenderer
   private vehicleRenderer!: VehicleRenderer
   private boostEffects!: BoostEffects
@@ -31,9 +32,7 @@ export class GameScene extends Phaser.Scene {
   private gamepadManager!: GamepadManager
   private phaseManager = new GamePhaseManager()
   private overlayContainer: Phaser.GameObjects.Container | null = null
-  private prevBodiesSnapshot: { id: string; x: number; y: number; angle: number; shape: string }[] = []
   private sfx!: SFXManager
-  private prevBoostStates = new Map<string, string>()
 
   constructor() {
     super('GameScene')
@@ -54,10 +53,12 @@ export class GameScene extends Phaser.Scene {
       zones: this.map.zones,
     })
 
-    this.vehicleSystem = new VehicleSystem(this.engine)
+    this.eventBus = new EventBus()
+
+    this.vehicleSystem = new VehicleSystem(this.engine, this.eventBus)
     this.zoneSystem = new ZoneSystem(this.map.zones)
     const playerCount = (this.scene.settings.data as { playerCount?: number })?.playerCount
-    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map, undefined, playerCount)
+    this.gameState = new GameState(this.engine, this.vehicleSystem, this.map, undefined, playerCount, this.eventBus)
     this.gameState.startMatch()
 
     this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
@@ -76,15 +77,23 @@ export class GameScene extends Phaser.Scene {
 
     this.sfx = new SFXManager(this)
 
-    this.engine.onCollision((event) => {
-      const isVehicleCollision = event.bodyA.startsWith('vehicle_') && event.bodyB.startsWith('vehicle_')
-      if (isVehicleCollision) {
-        this.sfx.playCollision(Math.min(event.relativeVelocity / 15, 0.5))
+    this.eventBus.on((event) => {
+      switch (event.type) {
+        case 'elimination':
+          this.eliminationAnimation.start(
+            { x: event.position.x, y: event.position.y, shape: event.shape, colorIndex: event.colorIndex },
+            event.hitter ? `+${1 + (event.bounces >= 2 ? event.bounces * 2 : 0)}` : undefined,
+          )
+          this.sfx.playElimination()
+          break
+        case 'vehicleCollision':
+          this.sfx.playCollision(Math.min(event.relativeVelocity / 15, 0.5))
+          break
+        case 'boostActivation':
+          this.sfx.playBoost()
+          break
       }
     })
-
-    this.prevBodiesSnapshot = []
-    this.prevBoostStates.clear()
 
     this.startCountdown()
   }
@@ -92,8 +101,6 @@ export class GameScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     this.boostEffects.update(delta, this.engine.getBodies(), this.vehicleSystem)
     this.eliminationAnimation.update(delta)
-
-    this.detectBoostActivation()
 
     if (this.phaseManager.phase !== 'playing') {
       this.vehicleRenderer.draw(this.engine.getBodies())
@@ -107,22 +114,12 @@ export class GameScene extends Phaser.Scene {
     while (this.accumulator >= STEP_MS) {
       this.accumulator -= STEP_MS
 
-      this.prevBodiesSnapshot = this.engine.getBodies().map((b) => ({
-        id: b.id,
-        x: b.x,
-        y: b.y,
-        angle: b.angle,
-        shape: b.shape,
-      }))
-
       const commands: VehicleCommand[] = this.collectCommands()
       this.vehicleSystem.update(_time, commands)
       this.engine.step(STEP_MS)
       this.vehicleSystem.postStep()
       this.updateZones()
       this.gameState.update(_time, STEP_MS)
-
-      this.detectEliminations()
 
       if (this.gameState.isRoundEnded()) {
         this.showRoundEnd()
@@ -133,35 +130,6 @@ export class GameScene extends Phaser.Scene {
     this.vehicleRenderer.draw(this.engine.getBodies())
     this.eliminationAnimation.draw()
     this.drawHUD()
-  }
-
-  private detectEliminations(): void {
-    const currentIds = new Set(this.engine.getBodies().map((b) => b.id))
-    for (const prev of this.prevBodiesSnapshot) {
-      if (!currentIds.has(prev.id)) {
-        const hitter = this.gameState.lastVehicleHit.get(prev.id)
-        let scoreText: string | undefined
-        if (hitter) {
-          const bounces = this.gameState.wallBounceCounts.get(prev.id) ?? 0
-          const bonus = bounces >= 2 ? bounces * 2 : 0
-          scoreText = bonus > 0 ? `+${1 + bonus}` : '+1'
-        }
-        this.eliminationAnimation.start(prev, scoreText)
-        this.sfx.playElimination()
-      }
-    }
-  }
-
-  private detectBoostActivation(): void {
-    for (const body of this.engine.getBodies()) {
-      const state = this.vehicleSystem.getBoostState(body.id)
-      if (!state) continue
-      const prev = this.prevBoostStates.get(body.id) ?? 'idle'
-      if (prev !== 'active' && state === 'active') {
-        this.sfx.playBoost()
-      }
-      this.prevBoostStates.set(body.id, state)
-    }
   }
 
   private drawHUD(): void {
