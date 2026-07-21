@@ -1,4 +1,4 @@
-import type { BodyState, VehicleSystem } from '@bump-bumped/engine'
+import type { BodyState, BoostStatusReader } from '@bump-bumped/engine'
 import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 import { ParticleSystem } from './ParticleSystem.js'
@@ -25,7 +25,7 @@ export class BoostEffects {
     this.particleSystem = new ParticleSystem(this.particleGfx)
   }
 
-  update(delta: number, bodies: BodyState[], vehicleSystem: VehicleSystem): void {
+  update(delta: number, bodies: BodyState[], boostStatus: BoostStatusReader): void {
     this.elapsed += delta
     this.particleSystem.update(delta)
 
@@ -42,7 +42,7 @@ export class BoostEffects {
     this.particleGfx.clear()
 
     for (const body of bodies) {
-      const boostState = vehicleSystem.getBoostState(body.id)
+      const boostState = boostStatus.getBoostState(body.id)
       if (!boostState) continue
 
       const prev = this.prevBoostState.get(body.id) ?? 'idle'
@@ -60,7 +60,7 @@ export class BoostEffects {
 
       this.prevBoostState.set(body.id, boostState)
 
-      if (boostState === 'idle' && vehicleSystem.getBoostProgress(body.id) >= 1) {
+      if (boostState === 'idle' && boostStatus.getBoostProgress(body.id) >= 1) {
         const pulse = 0.5 + 0.5 * Math.sin(this.elapsed * 0.006)
         this.gfx.fillStyle(color, pulse * 0.12)
         this.gfx.fillCircle(body.x, body.y, VEHICLE_RADIUS * 1.8)

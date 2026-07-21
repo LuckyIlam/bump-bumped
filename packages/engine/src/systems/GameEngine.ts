@@ -1,20 +1,23 @@
 import { EventBus } from '../events/EventBus.js'
 import type { VehicleCommand } from '../input/VehicleCommand.js'
 import type { MapData } from '../map/types.js'
+import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
 import type { BodyState } from '../physics/types.js'
-import type { BoostPhase } from '../state/BoostState.js'
 import type { GameStateSnapshot } from '../state/GameState.js'
 import { GameState } from '../state/GameState.js'
+import type { BoostStatusReader } from './BoostStatusReader.js'
 import { VehicleSystem } from './VehicleSystem.js'
 import { ZoneSystem } from './ZoneSystem.js'
 
 export class GameEngine {
   readonly eventBus: EventBus
-  readonly engine: MatterPhysicsEngine
-  readonly vehicleSystem: VehicleSystem
+  readonly engine: IPhysicsEngine
+  readonly boostStatus: BoostStatusReader
   readonly zoneSystem: ZoneSystem
   readonly gameState: GameState
+
+  private readonly vehicleSystem: VehicleSystem
 
   constructor(map: MapData, playerCount?: number) {
     this.eventBus = new EventBus()
@@ -28,6 +31,7 @@ export class GameEngine {
     })
 
     this.vehicleSystem = new VehicleSystem(this.engine, this.eventBus)
+    this.boostStatus = this.vehicleSystem
     this.zoneSystem = new ZoneSystem(map.zones)
     this.gameState = new GameState(this.engine, this.vehicleSystem, map, undefined, playerCount, this.eventBus)
 
@@ -55,14 +59,6 @@ export class GameEngine {
 
   getSnapshot(): GameStateSnapshot {
     return this.gameState.getSnapshot()
-  }
-
-  getBoostState(id: string): BoostPhase | undefined {
-    return this.vehicleSystem.getBoostState(id)
-  }
-
-  getBoostProgress(id: string): number {
-    return this.vehicleSystem.getBoostProgress(id)
   }
 
   isRoundEnded(): boolean {
