@@ -2,8 +2,10 @@ import { BODY_FRICTION, BODY_MASS, BODY_RESTITUTION, VEHICLE_RADIUS } from '../c
 import type { EventBus } from '../events/EventBus.js'
 import type { MapData } from '../map/types.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
-import type { BodyId, CollisionEvent, VehicleShape } from '../physics/types.js'
+import type { BodyId, VehicleShape } from '../physics/types.js'
 import type { VehicleSystem } from '../systems/VehicleSystem.js'
+import { CollisionTracker } from './CollisionTracker.js'
+import { ScoringService } from './ScoringService.js'
 
 const VEHICLE_SHAPES: VehicleShape[] = ['circle', 'square', 'diamond', 'hexagon']
 
@@ -57,8 +59,8 @@ export class GameState {
   private map: MapData
   private randomizer: ShapeRandomizer
   private eventBus?: EventBus
-  wallBounceCounts: Map<BodyId, number> = new Map()
-  lastVehicleHit: Map<BodyId, BodyId | null> = new Map()
+  private collisionTracker: CollisionTracker
+  private scoringService = new ScoringService()
   private roundNumber = 0
 
   private playerCount: number
@@ -77,6 +79,7 @@ export class GameState {
     this.randomizer = randomizer ?? defaultRandomizer
     this.playerCount = playerCount ?? map.spawns.length
     this.eventBus = eventBus
+    this.collisionTracker = new CollisionTracker(engine, eventBus)
 
     this.match = {
       currentRound: 0,
@@ -91,30 +94,6 @@ export class GameState {
       aliveCount: 0,
       eliminationOrder: [],
       winner: null,
-    }
-
-    this.engine.onCollision((event: CollisionEvent) => {
-      this.handleCollision(event)
-    })
-  }
-
-  private handleCollision(event: CollisionEvent): void {
-    const { bodyA, bodyB } = event
-    const aIsVehicle = this.players.some((p) => p.id === bodyA)
-    const bIsVehicle = this.players.some((p) => p.id === bodyB)
-    const aIsWall = bodyA === 'wall'
-    const bIsWall = bodyB === 'wall'
-
-    if (aIsVehicle && bIsWall) {
-      this.wallBounceCounts.set(bodyA, (this.wallBounceCounts.get(bodyA) ?? 0) + 1)
-      this.eventBus?.emit({ type: 'wallBounce', bodyId: bodyA })
-    } else if (bIsVehicle && aIsWall) {
-      this.wallBounceCounts.set(bodyB, (this.wallBounceCounts.get(bodyB) ?? 0) + 1)
-      this.eventBus?.emit({ type: 'wallBounce', bodyId: bodyB })
-    } else if (aIsVehicle && bIsVehicle) {
-      this.lastVehicleHit.set(bodyA, bodyB)
-      this.lastVehicleHit.set(bodyB, bodyA)
-      this.eventBus?.emit({ type: 'vehicleCollision', bodyA, bodyB, relativeVelocity: event.relativeVelocity })
     }
   }
 
@@ -153,8 +132,7 @@ export class GameState {
       this.vehicleSystem.unregister(player.id)
     }
 
-    this.wallBounceCounts.clear()
-    this.lastVehicleHit.clear()
+    this.collisionTracker.clear()
 
     this.round = {
       phase: 'playing',
@@ -189,6 +167,8 @@ export class GameState {
       })
       this.vehicleSystem.register(player.id)
     }
+
+    this.collisionTracker.setVehicles(this.players.map((p) => p.id))
   }
 
   update(_now: number, _delta: number): void {
@@ -222,12 +202,12 @@ export class GameState {
     if (!player?.alive) return
 
     const bodyState = this.engine.getBody(bodyId)
+    const hitter = this.collisionTracker.getLastHitter(bodyId)
+    const bounces = this.collisionTracker.getBounceCount(bodyId)
 
-    const hitter = this.lastVehicleHit.get(bodyId)
     if (hitter) {
       const hitterPlayer = this.players.find((p) => p.id === hitter)
       if (hitterPlayer) {
-        const bounces = this.wallBounceCounts.get(bodyId) ?? 0
         const bonus = bounces >= 2 ? bounces * 2 : 0
         hitterPlayer.score += 1 + bonus
       }
@@ -241,8 +221,8 @@ export class GameState {
     this.eventBus?.emit({
       type: 'elimination',
       bodyId,
-      hitter: hitter ?? null,
-      bounces: this.wallBounceCounts.get(bodyId) ?? 0,
+      hitter,
+      bounces,
       position: bodyState ? { x: bodyState.x, y: bodyState.y } : { x: 0, y: 0 },
       shape: player.shape,
       colorIndex: player.colorIndex,
@@ -275,34 +255,7 @@ export class GameState {
   }
 
   private awardPoints(): void {
-    const placementPoints = [5, 3, 1, 0]
-
-    const sorted: PlayerState[] = []
-    const winner = this.players.find((p) => p.alive)
-    if (winner) {
-      sorted.push(winner)
-    }
-    const eliminated = [...this.players].filter((p) => !p.alive).sort((a, b) => b.eliminationOrder - a.eliminationOrder)
-    sorted.push(...eliminated)
-
-    for (let i = 0; i < sorted.length; i++) {
-      const points = placementPoints[i] ?? 0
-      sorted[i].roundScore = points
-      sorted[i].score += points
-    }
-
-    for (const eliminatedId of this.round.eliminationOrder) {
-      const lastHitter = this.lastVehicleHit.get(eliminatedId)
-      if (lastHitter) {
-        const hitter = this.players.find((p) => p.id === lastHitter)
-        if (!hitter) continue
-        hitter.roundScore += 1
-        const bounces = this.wallBounceCounts.get(eliminatedId) ?? 0
-        if (bounces >= 2) {
-          hitter.roundScore += bounces * 2
-        }
-      }
-    }
+    this.scoringService.awardRoundScores(this.players, this.round.eliminationOrder, this.collisionTracker)
   }
 
   private checkMatchEnd(): void {
