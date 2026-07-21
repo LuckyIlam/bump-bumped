@@ -1,5 +1,6 @@
 import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
+import { fillVehicleShape } from '../shapes/VehicleShapeDrawer.js'
 
 interface Elimination {
   x: number
@@ -88,34 +89,7 @@ export class EliminationAnimation {
 
     const { x, y } = a
 
-    this.gfx.fillStyle(a.color, alpha * 0.8)
-    switch (a.shape) {
-      case 'square':
-        this.gfx.fillRect(x - r, y - r, r * 2, r * 2)
-        break
-      case 'diamond':
-        this.gfx.fillPoints(
-          [
-            { x, y: y - r },
-            { x: x + r, y },
-            { x, y: y + r },
-            { x: x - r, y },
-          ] as Phaser.Math.Vector2[],
-          true,
-        )
-        break
-      case 'hexagon': {
-        const pts: { x: number; y: number }[] = []
-        for (let i = 0; i < 6; i++) {
-          const angle = (Math.PI * 2 * i) / 6 - Math.PI / 2
-          pts.push({ x: x + Math.cos(angle) * r, y: y + Math.sin(angle) * r })
-        }
-        this.gfx.fillPoints(pts as Phaser.Math.Vector2[], true)
-        break
-      }
-      default:
-        this.gfx.fillCircle(x, y, r)
-    }
+    fillVehicleShape(this.gfx, a.shape, x, y, r, a.color, alpha * 0.8)
 
     this.gfx.lineStyle(3, a.color, alpha)
     this.gfx.lineBetween(x, y, x + Math.cos(a.angle) * r * 1.4, y + Math.sin(a.angle) * r * 1.4)
