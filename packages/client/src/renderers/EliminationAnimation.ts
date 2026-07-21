@@ -11,14 +11,6 @@ interface Elimination {
   progress: number
 }
 
-interface EliminationBody {
-  id: string
-  x: number
-  y: number
-  angle: number
-  shape: string
-}
-
 export class EliminationAnimation {
   private gfx: Phaser.GameObjects.Graphics
   private anims: Elimination[] = []
@@ -28,21 +20,20 @@ export class EliminationAnimation {
     this.gfx = scene.add.graphics().setDepth(3)
   }
 
-  start(body: EliminationBody, scoreText?: string): void {
-    const idx = parseInt(body.id.replace('vehicle_', ''), 10)
-    const color = PLAYER_COLORS[idx % PLAYER_COLORS.length]
+  start(params: { x: number; y: number; shape: string; colorIndex: number }, scoreText?: string): void {
+    const color = PLAYER_COLORS[params.colorIndex % PLAYER_COLORS.length]
     this.anims.push({
-      x: body.x,
-      y: body.y,
-      angle: body.angle,
-      shape: body.shape,
+      x: params.x,
+      y: params.y,
+      angle: 0,
+      shape: params.shape,
       color,
       progress: 0,
     })
 
     if (scoreText) {
       const t = this.scene.add
-        .text(body.x, body.y - 10, scoreText, {
+        .text(params.x, params.y - 10, scoreText, {
           fontSize: '18px',
           color: '#ffffff',
           fontFamily: 'monospace',
