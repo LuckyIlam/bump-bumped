@@ -1,5 +1,5 @@
 import type { BodyState, BoostStatusReader } from '@bump-bumped/engine'
-import { PLAYER_COLORS, VEHICLE_RADIUS } from '@bump-bumped/engine'
+import { PLAYER_COLORS, VEHICLE_RADIUS, vehicleIndex } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 import { ParticleSystem } from './ParticleSystem.js'
 
@@ -95,7 +95,7 @@ export class BoostEffects {
   }
 
   private getColor(bodyId: string): number {
-    const idx = parseInt(bodyId.replace('vehicle_', ''), 10)
+    const idx = vehicleIndex(bodyId)
     return PLAYER_COLORS[idx % PLAYER_COLORS.length]
   }
 }

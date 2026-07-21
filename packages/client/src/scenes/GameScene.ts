@@ -1,5 +1,5 @@
 import type { MapData, VehicleCommand } from '@bump-bumped/engine'
-import { GameEngine, GamePhaseManager, parseMap } from '@bump-bumped/engine'
+import { GameEngine, GamePhaseManager, parseMap, vehicleId } from '@bump-bumped/engine'
 import Phaser from 'phaser'
 import { SFXManager } from '../audio/SFXManager.js'
 import { GamepadManager } from '../input/GamepadManager.js'
@@ -220,8 +220,8 @@ export class GameScene extends Phaser.Scene {
   private collectCommands(): VehicleCommand[] {
     const commands: VehicleCommand[] = []
 
-    commands.push(this.keyboardManager.getP1Command('vehicle_0'))
-    commands.push(this.keyboardManager.getP2Command('vehicle_1'))
+    commands.push(this.keyboardManager.getP1Command(vehicleId(0)))
+    commands.push(this.keyboardManager.getP2Command(vehicleId(1)))
 
     const gamepadCommands = this.gamepadManager.getCommands()
     for (const cmd of gamepadCommands) {
