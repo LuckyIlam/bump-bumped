@@ -1,3 +1,36 @@
+## Project
+
+**bump-bumped** — jeu de combat de véhicules local multiplayer.
+- Phaser 4 + Matter.js + TypeScript
+- Monorepo (npm workspaces) : `packages/engine` + `packages/client`
+
+## Code structure
+
+```
+packages/engine/src/       ← logique de jeu (tests dans __tests__/)
+  state/                   ← GameState, CollisionTracker, ScoringService, VehicleId
+  systems/                 ← VehicleSystem, ZoneSystem, GameEngine, GamePhaseManager
+  physics/                 ← MatterPhysicsEngine, IPhysicsEngine
+  events/                  ← EventBus
+  map/                     ← types, parser
+  config/                  ← constantes de jeu
+packages/client/src/       ← rendu Phaser
+  scenes/                  ← GameScene, MatchEndScene
+  renderers/               ← HUD, BoostEffects, VehicleRenderer, ArenaRenderer, etc.
+  input/                   ← KeyboardManager, GamepadManager
+  shapes/                  ← VehicleShapeDrawer
+```
+
+## Architecture decisions
+
+- **GameEngine** = composition root : seul point d'entrée du client vers la logique de jeu (Phases 4-5)
+- **EventBus** = canal de communication engine → client (Phase 2)
+- **IPhysicsEngine** = abstraction physique (LSP), injectée partout (Phase 5)
+- **BoostStatusReader** = interface étroite pour le client (ISP), implémentée par VehicleSystem (Phase 5)
+- **CollisionTracker / ScoringService** extraits de GameState (SRP, Phase 3)
+- **VehicleId** (`vehicleId(index)` / `vehicleIndex(id)`) = helper centralisé pour les IDs de véhicules (Phase 6)
+- **Engine exports** : seuls GameEngine, BoostStatusReader, GamePhaseManager, types et constantes sont exportés publiquement (Phase 6)
+
 ## Workflow
 
 - **SOLID first** : toute modification doit respecter les principes SOLID (pas de god class, dépendances vers les abstractions, interfaces étroites, etc.)
