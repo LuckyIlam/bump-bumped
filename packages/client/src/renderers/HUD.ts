@@ -1,4 +1,4 @@
-import type { VehicleSystem } from '@bump-bumped/engine'
+import type { BoostStatusReader } from '@bump-bumped/engine'
 import { PLAYER_COLORS } from '@bump-bumped/engine'
 import type Phaser from 'phaser'
 
@@ -63,7 +63,7 @@ export class HUD {
     }
   }
 
-  draw(roundNumber: number, totalRounds: number, players: HUDPlayer[], vehicleSystem: VehicleSystem): void {
+  draw(roundNumber: number, totalRounds: number, players: HUDPlayer[], boostStatus: BoostStatusReader): void {
     this.gfx.clear()
     this.roundText.setText(`Manche ${roundNumber} / ${totalRounds}`)
 
@@ -80,8 +80,8 @@ export class HUD {
       this.playerLabels[i].setText(`P${p.index + 1} ${shapeSym}  ${p.score} pt${p.score > 1 ? 's' : ''}${aliveMark}`)
       this.playerLabels[i].setColor(p.alive ? `#${color.toString(16).padStart(6, '0')}` : '#666666')
 
-      const boostState = vehicleSystem.getBoostState(p.id)
-      const progress = vehicleSystem.getBoostProgress(p.id)
+      const boostState = boostStatus.getBoostState(p.id)
+      const progress = boostStatus.getBoostProgress(p.id)
 
       this.drawBoostCharge(cx + 70, HUD_Y, BOOST_RADIUS, boostState, progress)
     }

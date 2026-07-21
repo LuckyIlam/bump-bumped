@@ -82,7 +82,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
-    this.boostEffects.update(delta, this.gameEngine.getBodies(), this.gameEngine.vehicleSystem)
+    this.boostEffects.update(delta, this.gameEngine.getBodies(), this.gameEngine.boostStatus)
     this.eliminationAnimation.update(delta)
 
     if (this.phaseManager.phase !== 'playing') {
@@ -113,7 +113,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawHUD(): void {
     const snap = this.gameEngine.getSnapshot()
-    this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.gameEngine.vehicleSystem)
+    this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.gameEngine.boostStatus)
   }
 
   private startCountdown(): void {
