@@ -1,3 +1,14 @@
+## Workflow
+
+- **SOLID first** : toute modification doit respecter les principes SOLID (pas de god class, dépendances vers les abstractions, interfaces étroites, etc.)
+- **Découpage par tâche** : chaque fonctionnalité est décomposée en tâches atomiques
+  - Une tâche = un commit
+  - Écrire ou mettre à jour les tests unitaires avant ou avec le code
+  - Lancer `npm -w packages/client run build` + `npm -w @bump-bumped/engine test` entre chaque tâche
+  - Ne pas commit sans validation explicite du build et des tests
+- **Relecture** : avant chaque commit, montrer le diff à l'utilisateur et attendre son approbation
+- **Un commit par tâche** : pas de commits géants, chaque commit couvre une seule responsabilité
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
