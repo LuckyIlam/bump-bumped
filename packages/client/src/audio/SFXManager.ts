@@ -1,18 +1,8 @@
 import type Phaser from 'phaser'
 
-const SOUND_KEYS = [
-  'collision',
-  'boost',
-  'elimination',
-  'countdown',
-  'go',
-  'roundEnd',
-  'matchEnd',
-  'menuSelect',
-  'playerReady',
-] as const
+const SOUND_KEYS = ['collision', 'boost', 'elimination', 'countdown', 'go', 'roundEnd', 'matchEnd', 'menuSelect', 'playerReady'] as const
 
-export type SfxKey = typeof SOUND_KEYS[number]
+export type SfxKey = (typeof SOUND_KEYS)[number]
 
 export class SFXManager {
   private scene: Phaser.Scene
