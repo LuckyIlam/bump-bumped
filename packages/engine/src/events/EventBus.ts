@@ -22,10 +22,12 @@ export type EventHandler = (event: GameEvent) => void
 export class EventBus {
   private handlers: EventHandler[] = []
 
+  /** Registers a handler for all game events. */
   on(handler: EventHandler): void {
     this.handlers.push(handler)
   }
 
+  /** Removes a previously registered handler. */
   off(handler: EventHandler): void {
     const idx = this.handlers.indexOf(handler)
     if (idx !== -1) {
@@ -33,6 +35,7 @@ export class EventBus {
     }
   }
 
+  /** Dispatches an event to all registered handlers synchronously. */
   emit(event: GameEvent): void {
     for (const handler of this.handlers) {
       handler(event)

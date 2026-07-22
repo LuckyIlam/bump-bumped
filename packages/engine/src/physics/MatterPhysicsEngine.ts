@@ -38,6 +38,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
   private collisionCallback: CollisionCallback | null = null
   private pendingEffects: PendingEffect[] = []
 
+  /** Creates the Matter.js world with walls and registers collision events. */
   createWorld(config: WorldConfig): void {
     this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0, scale: 0.001 } })
     this.world = this.engine.world
@@ -147,11 +148,13 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     })
   }
 
+  /** Sets the global gravity vector. */
   setGravity(gravity: { x: number; y: number }): void {
     this.engine.gravity.x = gravity.x
     this.engine.gravity.y = gravity.y
   }
 
+  /** Adds a physics body and returns its ID. Supports circle, square, diamond, and hexagon shapes. */
   addBody(config: BodyConfig): BodyId {
     let body: Matter.Body
 
@@ -191,6 +194,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     return config.id
   }
 
+  /** Removes a body from the physics world. */
   removeBody(id: BodyId): void {
     const body = this.bodies.get(id)
     if (body) {
@@ -200,12 +204,14 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Returns the current state of a body, or undefined if not found. */
   getBody(id: BodyId): BodyState | undefined {
     const body = this.bodies.get(id)
     if (!body) return undefined
     return this.toBodyState(id, body)
   }
 
+  /** Sets the linear velocity of a body. */
   setBodyVelocity(id: BodyId, velocity: { x: number; y: number }): void {
     const body = this.bodies.get(id)
     if (body) {
@@ -213,6 +219,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Sets the angular velocity of a body. */
   setAngularVelocity(id: BodyId, velocity: number): void {
     const body = this.bodies.get(id)
     if (body) {
@@ -220,6 +227,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Sets the air friction coefficient of a body (used for zone-based friction). */
   setFrictionAir(id: BodyId, friction: number): void {
     const body = this.bodies.get(id)
     if (body) {
@@ -227,6 +235,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Applies a force at the body's centre of mass. */
   applyForce(id: BodyId, force: { x: number; y: number }): void {
     const body = this.bodies.get(id)
     if (body) {
@@ -234,14 +243,17 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Advances the physics simulation by the given delta in ms. */
   step(delta: number): void {
     Matter.Engine.update(this.engine, delta)
   }
 
+  /** Registers a callback invoked on each collision pair per step. */
   onCollision(callback: CollisionCallback): void {
     this.collisionCallback = callback
   }
 
+  /** Returns the state of all registered bodies. */
   getBodies(): BodyState[] {
     const result: BodyState[] = []
     for (const [id, body] of this.bodies) {
@@ -250,6 +262,7 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     return result
   }
 
+  /** Returns a snapshot of the full world state (bodies + timestamp). */
   getWorldState(): WorldState {
     return {
       bodies: this.getBodies(),

@@ -6,10 +6,16 @@ export interface BoostState {
   rechargedAt: number
 }
 
+/** Returns a new boost state initialised to idle with zero timestamps. */
 export function createBoostState(): BoostState {
   return { phase: 'idle', activeUntil: 0, rechargedAt: 0 }
 }
 
+/**
+ * Advances the boost state machine without mutating the input.
+ * Transitions: idle → active → recharging → idle.
+ * @returns A new BoostState with the updated phase and timestamps.
+ */
 export function updateBoostPhase(state: BoostState, now: number, wantBoost: boolean, durationMs: number, cooldownMs: number): BoostState {
   let { phase, activeUntil, rechargedAt } = state
 
