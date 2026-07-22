@@ -4,7 +4,7 @@ import type { MapData } from '../map/types.js'
 import type { IPhysicsEngine } from '../physics/IPhysicsEngine.js'
 import { MatterPhysicsEngine } from '../physics/MatterPhysicsEngine.js'
 import type { BodyState } from '../physics/types.js'
-import type { GameStateSnapshot } from '../state/GameState.js'
+import type { GameStateSnapshot, ShapeRandomizer } from '../state/GameState.js'
 import { GameState } from '../state/GameState.js'
 import type { BoostStatusReader } from './BoostStatusReader.js'
 import { VehicleSystem } from './VehicleSystem.js'
@@ -28,8 +28,9 @@ export class GameEngine {
    * Composition root — creates all engine subsystems and wires them together.
    * @param map - Parsed map data (walls, spawns, pockets, zones).
    * @param playerCount - Number of players (defaults to map spawn count).
+   * @param randomizer - Optional shape randomizer (uses Math.random when omitted).
    */
-  constructor(map: MapData, playerCount?: number) {
+  constructor(map: MapData, playerCount?: number, randomizer?: ShapeRandomizer) {
     this.eventBus = new EventBus()
 
     this.engine = new MatterPhysicsEngine()
@@ -43,7 +44,7 @@ export class GameEngine {
     this.vehicleSystem = new VehicleSystem(this.engine, this.eventBus)
     this.boostStatus = this.vehicleSystem
     this.zoneSystem = new ZoneSystem(map.zones)
-    this.gameState = new GameState(this.engine, this.vehicleSystem, map, undefined, playerCount, this.eventBus)
+    this.gameState = new GameState(this.engine, this.vehicleSystem, map, randomizer, playerCount, this.eventBus)
 
     this.gameState.startMatch()
   }
