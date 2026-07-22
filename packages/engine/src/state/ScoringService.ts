@@ -5,6 +5,12 @@ import type { PlayerState } from './GameState.js'
 const PLACEMENT_POINTS = [5, 3, 1, 0]
 
 export class ScoringService {
+  /**
+   * Awards placement points and bumper bonuses for a finished round.
+   * @param players - All players (mutated in place with roundScore and total score).
+   * @param eliminationOrder - Order in which players were eliminated (last = first eliminated).
+   * @param tracker - Collision tracker providing last-hitter and bounce data.
+   */
   awardRoundScores(players: PlayerState[], eliminationOrder: BodyId[], tracker: CollisionTracker): void {
     this.awardPlacementPoints(players)
     this.awardBumperBonuses(players, eliminationOrder, tracker)

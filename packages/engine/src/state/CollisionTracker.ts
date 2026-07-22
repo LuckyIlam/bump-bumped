@@ -7,6 +7,10 @@ export class CollisionTracker {
   private lastVehicleHit = new Map<BodyId, BodyId | null>()
   private knownVehicles = new Set<BodyId>()
 
+  /**
+   * @param engine - Physics engine to listen for collision events.
+   * @param eventBus - Optional bus for emitting wallBounce and vehicleCollision events.
+   */
   constructor(
     engine: IPhysicsEngine,
     private eventBus?: EventBus,
@@ -16,18 +20,22 @@ export class CollisionTracker {
     })
   }
 
+  /** Sets the set of tracked vehicle IDs. Collisions involving other bodies are ignored. */
   setVehicles(ids: BodyId[]): void {
     this.knownVehicles = new Set(ids)
   }
 
+  /** Returns the number of wall bounces for a vehicle this round. */
   getBounceCount(bodyId: BodyId): number {
     return this.wallBounceCounts.get(bodyId) ?? 0
   }
 
+  /** Returns the last vehicle that collided with the given vehicle, or null. */
   getLastHitter(bodyId: BodyId): BodyId | null {
     return this.lastVehicleHit.get(bodyId) ?? null
   }
 
+  /** Resets all bounce counts and hitter data for a new round. */
   clear(): void {
     this.wallBounceCounts.clear()
     this.lastVehicleHit.clear()

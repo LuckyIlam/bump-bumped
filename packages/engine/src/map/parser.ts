@@ -12,6 +12,10 @@ import {
 
 const SUPPORTED_FORMAT_VERSION = 1
 
+/**
+ * Parses and validates a JSON map string.
+ * @returns ok(MapData) on success, or err(errorMessage) on failure.
+ */
 export function parseMap(json: string): Result<MapData, string> {
   let parsed: Record<string, unknown>
   try {

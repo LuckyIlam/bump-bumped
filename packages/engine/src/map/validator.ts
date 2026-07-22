@@ -1,6 +1,7 @@
 const VALID_WALL_TYPES = ['bounce', 'reflect', 'absorb', 'amplify']
 const VALID_ZONE_TYPES = ['neutral', 'grip', 'slick', 'accelerator']
 
+/** Checks that each required field has the correct JavaScript type. */
 export function validateFieldTypes(data: Record<string, unknown>): string | null {
   if (typeof data.width !== 'number' || data.width <= 0 || !Number.isInteger(data.width)) return 'width must be a positive integer'
   if (typeof data.height !== 'number' || data.height <= 0 || !Number.isInteger(data.height)) return 'height must be a positive integer'
@@ -14,6 +15,7 @@ export function validateFieldTypes(data: Record<string, unknown>): string | null
   return null
 }
 
+/** Checks that all required top-level fields are present. */
 export function validateRequiredFields(data: Record<string, unknown>): string | null {
   const required = ['formatVersion', 'name', 'width', 'height', 'walls', 'pockets', 'spawns']
   for (const field of required) {
@@ -22,6 +24,7 @@ export function validateRequiredFields(data: Record<string, unknown>): string | 
   return null
 }
 
+/** Validates wall segment data (minimum 4 walls, correct field types). */
 export function validateWalls(data: Record<string, unknown>): string | null {
   const walls = data.walls as any[]
   if (walls.length < 4) return 'at least 4 walls required'
@@ -38,6 +41,7 @@ export function validateWalls(data: Record<string, unknown>): string | null {
   return null
 }
 
+/** Validates pocket data (minimum 1 pocket, correct field types). */
 export function validatePockets(data: Record<string, unknown>): string | null {
   const pockets = data.pockets as any[]
   if (pockets.length < 1) return 'at least 1 pocket required'
@@ -51,6 +55,7 @@ export function validatePockets(data: Record<string, unknown>): string | null {
   return null
 }
 
+/** Validates zone data (optional field; correct field types and valid zone types). */
 export function validateZones(data: Record<string, unknown>): string | null {
   const zones = (data.zones ?? []) as any[]
   for (let i = 0; i < zones.length; i++) {
@@ -65,6 +70,7 @@ export function validateZones(data: Record<string, unknown>): string | null {
   return null
 }
 
+/** Validates spawn data (exactly 4 spawn points, correct field types). */
 export function validateSpawns(data: Record<string, unknown>): string | null {
   const spawns = data.spawns as any[]
   if (spawns.length !== 4) return 'exactly 4 spawn points required'
@@ -78,6 +84,7 @@ export function validateSpawns(data: Record<string, unknown>): string | null {
   return null
 }
 
+/** Checks that all walls, pockets, zones, and spawns are within map boundaries. */
 export function validateBounds(data: Record<string, unknown>): string | null {
   const w = data.width as number
   const h = data.height as number

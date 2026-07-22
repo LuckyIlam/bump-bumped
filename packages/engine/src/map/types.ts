@@ -25,10 +25,12 @@ export interface MapData {
 
 export type Result<T, E> = { ok: true; value: T } | { ok: false; error: E }
 
+/** Wraps a value in a success result. */
 export function ok<T>(value: T): Result<T, never> {
   return { ok: true, value }
 }
 
+/** Wraps an error message in a failure result. */
 export function err<E>(error: E): Result<never, E> {
   return { ok: false, error }
 }
