@@ -74,6 +74,14 @@ export class GameState {
     playerCount?: number,
     eventBus?: EventBus,
   ) {
+    /**
+     * @param engine - Physics engine instance.
+     * @param vehicleSystem - Vehicle management system.
+     * @param map - Map data with spawns, walls, pockets, zones.
+     * @param randomizer - Optional shape randomizer (default picks randomly from available shapes).
+     * @param playerCount - Number of players (defaults to spawn count).
+     * @param eventBus - Optional event bus for emitting game events.
+     */
     this.engine = engine
     this.vehicleSystem = vehicleSystem
     this.map = map
@@ -98,6 +106,7 @@ export class GameState {
     }
   }
 
+  /** Initialises all players and starts the first round. */
   startMatch(): void {
     this.match = {
       currentRound: 0,
@@ -124,6 +133,10 @@ export class GameState {
     this.startRound()
   }
 
+  /**
+   * Resets the round: removes old bodies, clears collision data,
+   * spawns all players at their start positions.
+   */
   startRound(): void {
     this.roundNumber++
     this.match.currentRound = this.roundNumber
@@ -172,6 +185,7 @@ export class GameState {
     this.collisionTracker.setVehicles(this.players.map((p) => p.id))
   }
 
+  /** Advances the round by one frame: checks pockets and round-end conditions. */
   update(_now: number, _delta: number): void {
     if (this.round.phase !== 'playing') return
     this.checkPockets()
@@ -198,6 +212,10 @@ export class GameState {
     }
   }
 
+  /**
+   * Marks a player as eliminated, awards bumper bonus to the hitter,
+   * emits an elimination event, and removes the body from physics.
+   */
   private eliminate(bodyId: BodyId): void {
     const player = this.players.find((p) => p.id === bodyId)
     if (!player?.alive) return
@@ -239,6 +257,7 @@ export class GameState {
     }
   }
 
+  /** Finishes the current round, determines winner, awards points, checks match end. */
   private endRound(): void {
     this.round.phase = 'ended'
 
@@ -259,6 +278,10 @@ export class GameState {
     this.scoringService.awardRoundScores(this.players, this.round.eliminationOrder, this.collisionTracker)
   }
 
+  /**
+   * Checks whether the match should end or go to tiebreaker
+   * after the configured number of rounds.
+   */
   private checkMatchEnd(): void {
     if (this.match.phase === 'tiebreaker') {
       this.match.phase = 'finished'
@@ -283,18 +306,25 @@ export class GameState {
     }
   }
 
+  /** Returns true when the current round has ended. */
   isRoundEnded(): boolean {
     return this.round.phase === 'ended'
   }
 
+  /** Returns true when the entire match is finished. */
   isMatchFinished(): boolean {
     return this.match.phase === 'finished'
   }
 
+  /** Returns true when a tiebreaker round is required. */
   needsTiebreaker(): boolean {
     return this.match.phase === 'tiebreaker'
   }
 
+  /**
+   * Returns a defensive copy of the current game state.
+   * Mutating the returned objects does not affect internal state.
+   */
   getSnapshot(): GameStateSnapshot {
     return {
       match: { ...this.match },

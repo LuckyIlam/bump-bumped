@@ -28,11 +28,21 @@ export class VehicleSystem implements BoostStatusReader {
   private timestamps: Map<BodyId, number> = new Map()
   private zoneMods: Map<BodyId, { frictionMul: number; maxSpeedMul: number; turnMul: number }> = new Map()
 
+  /**
+   * @param engine - Physics engine for applying forces and reading body state.
+   * @param eventBus - Optional bus for emitting boost activation events.
+   */
   constructor(engine: IPhysicsEngine, eventBus?: EventBus) {
     this.engine = engine
     this.eventBus = eventBus
   }
 
+  /**
+   * Registers a vehicle so it can receive commands and boost updates.
+   * @param id - Unique vehicle identifier.
+   * @param config - Optional custom vehicle config (default config used when omitted).
+   * @param boost - Optional custom boost config (default config used when omitted).
+   */
   register(id: BodyId, config?: VehicleConfig, boost?: BoostConfig): void {
     this.bodies.set(id, {
       config: config ?? DEFAULT_VEHICLE_CONFIG,
@@ -42,16 +52,27 @@ export class VehicleSystem implements BoostStatusReader {
     this.timestamps.set(id, 0)
   }
 
+  /** Removes a vehicle from the system (clears boost state, timestamps, zone mods). */
   unregister(id: BodyId): void {
     this.bodies.delete(id)
     this.timestamps.delete(id)
     this.zoneMods.delete(id)
   }
 
+  /**
+   * Returns the current boost phase for a vehicle.
+   * @returns 'idle', 'active', 'recharging', or undefined if the vehicle is not registered.
+   */
   getBoostState(id: BodyId): BoostPhase | undefined {
     return this.bodies.get(id)?.boostState.phase
   }
 
+  /**
+   * Returns boost progress as a normalised 0‑1 value.
+   * - active  : fraction of duration elapsed.
+   * - recharging : fraction of cooldown elapsed.
+   * - idle : 1 (fully charged).
+   */
   getBoostProgress(id: BodyId): number {
     const entry = this.bodies.get(id)
     if (!entry) return 0
@@ -69,14 +90,25 @@ export class VehicleSystem implements BoostStatusReader {
     return 1
   }
 
+  /**
+   * Applies zone-based multipliers that override a vehicle's default physics.
+   * Called each frame while the vehicle is inside a zone.
+   */
   setZoneModifiers(vehicleId: BodyId, frictionMul: number, maxSpeedMul: number, turnMul: number): void {
     this.zoneMods.set(vehicleId, { frictionMul, maxSpeedMul, turnMul })
   }
 
+  /** Removes zone modifiers for a vehicle (called when it leaves a zone). */
   clearZoneModifiers(vehicleId: BodyId): void {
     this.zoneMods.delete(vehicleId)
   }
 
+  /**
+   * Applies vehicle commands (throttle, turn, boost) for the current frame.
+   * Emits a boostActivation event when boost transitions from idle to active.
+   * @param now - Current time in ms (used for boost timestamps).
+   * @param commands - List of commands, one per vehicle.
+   */
   update(now: number, commands: VehicleCommand[]): void {
     for (const cmd of commands) {
       const entry = this.bodies.get(cmd.vehicleId)
@@ -112,6 +144,11 @@ export class VehicleSystem implements BoostStatusReader {
     }
   }
 
+  /**
+   * Clamps each vehicle's speed to the configured maximum
+   * (optionally modified by zone multipliers). Must be called
+   * after each physics step.
+   */
   postStep(): void {
     for (const [id] of this.bodies) {
       const zoneMod = this.zoneMods.get(id)
