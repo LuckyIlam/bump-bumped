@@ -41,6 +41,7 @@ packages/client/src/       ← rendu Phaser
   - Ne pas commit sans validation explicite du build et des tests
 - **Relecture** : avant chaque commit, montrer le diff à l'utilisateur et attendre son approbation
 - **Un commit par tâche** : pas de commits géants, chaque commit couvre une seule responsabilité
+- **JSDoc obligatoire** : toute classe, méthode publique/protégée et fonction exportée doit avoir un commentaire JSDoc (description + `@param` + `@returns` le cas échéant). Pas de commentaires inside-code.
 
 ## graphify
 
