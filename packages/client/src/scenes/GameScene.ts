@@ -15,6 +15,7 @@ const STEP_MS = 1000 / 60
 
 const OVERLAY_COLORS = ['#ff3333', '#3388ff', '#ffcc00', '#33ff66']
 
+/** Main game scene — orchestrates the game loop, rendering, and input collection. */
 export class GameScene extends Phaser.Scene {
   private gameEngine!: GameEngine
   private arenaRenderer!: ArenaRenderer
@@ -30,10 +31,12 @@ export class GameScene extends Phaser.Scene {
   private overlayContainer: Phaser.GameObjects.Container | null = null
   private sfx!: SFXManager
 
+  /** Registers the scene under the key 'GameScene'. */
   constructor() {
     super('GameScene')
   }
 
+  /** Phaser lifecycle — sets up the engine, renderers, input, and event subscriptions. */
   create(): void {
     const result = parseMap(JSON.stringify(classicMapData))
     if (!result.ok) {
@@ -81,6 +84,7 @@ export class GameScene extends Phaser.Scene {
     this.startCountdown()
   }
 
+  /** Phaser lifecycle — fixed-step game loop with accumulator. */
   update(_time: number, delta: number): void {
     this.boostEffects.update(delta, this.gameEngine.getBodies(), this.gameEngine.boostStatus)
     this.eliminationAnimation.update(delta)
@@ -111,11 +115,13 @@ export class GameScene extends Phaser.Scene {
     this.drawHUD()
   }
 
+  /** Draws the HUD (round info, boost charge, scores). */
   private drawHUD(): void {
     const snap = this.gameEngine.getSnapshot()
     this.hud.draw(snap.round.number, snap.match.totalRounds, snap.players, this.gameEngine.boostStatus)
   }
 
+  /** Displays the 3-2-1-GO! countdown overlay. */
   private startCountdown(): void {
     this.phaseManager.startCountdown()
     const cx = this.scale.width / 2
@@ -157,6 +163,7 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** Shows the round-end overlay with scores and transitions to next round or match end. */
   private showRoundEnd(): void {
     const snap = this.gameEngine.getSnapshot()
     const info = this.phaseManager.onRoundEnded(snap)
@@ -217,6 +224,7 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** Gathers input commands from keyboard + gamepads for the current frame. */
   private collectCommands(): VehicleCommand[] {
     const commands: VehicleCommand[] = []
 
