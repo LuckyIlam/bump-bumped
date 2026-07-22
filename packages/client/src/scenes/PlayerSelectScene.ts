@@ -16,6 +16,7 @@ const SLOTS = [
   { label: 'Joueur 4', device: '', autoReady: false },
 ]
 
+/** Player selection screen — shows slots for 4 players and auto-starts when ready. */
 export class PlayerSelectScene extends Phaser.Scene {
   private statusTexts: Phaser.GameObjects.Text[] = []
   private slotDeviceTexts: Phaser.GameObjects.Text[] = []
@@ -25,10 +26,12 @@ export class PlayerSelectScene extends Phaser.Scene {
   private sfx!: SFXManager
   private prevReadyCount = 0
 
+  /** Registers the scene under the key 'PlayerSelectScene'. */
   constructor() {
     super('PlayerSelectScene')
   }
 
+  /** Phaser lifecycle — draws the slot UI and sets up input listeners. */
   create(): void {
     this.sfx = new SFXManager(this)
     const { width, height } = this.scale
@@ -62,6 +65,7 @@ export class PlayerSelectScene extends Phaser.Scene {
     this.setupInput()
   }
 
+  /** Phaser lifecycle — handles auto-start countdown when >= 2 players are ready. */
   update(): void {
     if (this.hasAutoStarted) return
 
@@ -98,6 +102,7 @@ export class PlayerSelectScene extends Phaser.Scene {
     }
   }
 
+  /** Draws the four player slots with colour indicators. */
   private drawSlots(width: number): void {
     for (let i = 0; i < 4; i++) {
       const y = SLOT_START_Y + i * SLOT_GAP
@@ -136,6 +141,7 @@ export class PlayerSelectScene extends Phaser.Scene {
     this.refreshSlots()
   }
 
+  /** Updates slot status text and device info (called when a gamepad connects/disconnects). */
   private refreshSlots(): void {
     for (let i = 0; i < 4; i++) {
       if (i < 2) {
@@ -156,6 +162,7 @@ export class PlayerSelectScene extends Phaser.Scene {
     }
   }
 
+  /** Registers keyboard and gamepad events for slot refresh and start. */
   private setupInput(): void {
     const gp = this.input.gamepad
     const kb = this.input.keyboard
@@ -179,6 +186,7 @@ export class PlayerSelectScene extends Phaser.Scene {
     }
   }
 
+  /** Transitions to GameScene with the number of ready players. */
   private startGame(): void {
     const readyCount = this.statusTexts.filter((t) => t.text === 'PRÊT').length
     this.sfx.playMenuSelect()

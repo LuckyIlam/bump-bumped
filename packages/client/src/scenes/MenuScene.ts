@@ -1,18 +1,22 @@
 import Phaser from 'phaser'
 import { SFXManager } from '../audio/SFXManager.js'
 
+/** Title screen — waits for any key or gamepad button to start. */
 export class MenuScene extends Phaser.Scene {
   private sfx!: SFXManager
 
+  /** Registers the scene under the key 'MenuScene'. */
   constructor() {
     super('MenuScene')
   }
 
+  /** Phaser lifecycle — preloads audio assets. */
   preload(): void {
     this.sfx = new SFXManager(this)
     this.sfx.preload()
   }
 
+  /** Phaser lifecycle — draws the title and listens for input. */
   create(): void {
     const { width, height } = this.scale
 

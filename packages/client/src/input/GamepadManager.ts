@@ -5,13 +5,16 @@ import type Phaser from 'phaser'
 const THROTTLE_DEAD_ZONE = 0.15
 const TURN_DEAD_ZONE = 0.15
 
+/** Manages gamepad input for up to 4 pads (mapped to players 3-6). */
 export class GamepadManager {
   private plugin: Phaser.Input.Gamepad.GamepadPlugin | null
 
+  /** @param scene - Phaser scene to read the gamepad plugin from. */
   constructor(scene: Phaser.Scene) {
     this.plugin = scene.input.gamepad
   }
 
+  /** Returns commands from all connected gamepads (R2 = throttle, left stick = turn, A = boost). */
   getCommands(): VehicleCommand[] {
     const commands: VehicleCommand[] = []
 

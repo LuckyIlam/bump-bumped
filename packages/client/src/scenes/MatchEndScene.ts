@@ -4,18 +4,22 @@ import { SFXManager } from '../audio/SFXManager.js'
 
 const COLORS = ['#ff3333', '#3388ff', '#ffcc00', '#33ff66']
 
+/** End-of-match screen — shows the winner, scores, and a prompt to return to menu. */
 export class MatchEndScene extends Phaser.Scene {
   private snapshot!: GameStateSnapshot
   private sfx!: SFXManager
 
+  /** Registers the scene under the key 'MatchEndScene'. */
   constructor() {
     super('MatchEndScene')
   }
 
+  /** Phaser lifecycle — receives the final snapshot passed from GameScene. */
   init(data: { snapshot: GameStateSnapshot }): void {
     this.snapshot = data.snapshot
   }
 
+  /** Phaser lifecycle — draws the results and listens for input to return to menu. */
   create(): void {
     this.sfx = new SFXManager(this)
     this.sfx.playMatchEnd()
