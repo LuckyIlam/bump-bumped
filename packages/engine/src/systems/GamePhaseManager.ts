@@ -13,14 +13,21 @@ export interface RoundEndInfo {
 export class GamePhaseManager {
   phase: GamePhase = 'countdown'
 
+  /** Resets phase to countdown (idle before a round starts). */
   startCountdown(): void {
     this.phase = 'countdown'
   }
 
+  /** Transitions from countdown to playing phase. */
   onCountdownComplete(): void {
     this.phase = 'playing'
   }
 
+  /**
+   * Builds round-end info from the current snapshot.
+   * Sets phase to roundEnd.
+   * @returns The winner, sorted players, round number, and winner ID.
+   */
   onRoundEnded(snapshot: GameStateSnapshot): RoundEndInfo {
     this.phase = 'roundEnd'
 
@@ -36,6 +43,10 @@ export class GamePhaseManager {
     }
   }
 
+  /**
+   * Determines the next action after the round-end overlay is dismissed.
+   * @returns 'matchEnd' when the match is over, 'nextRound' otherwise.
+   */
   dismissOverlay(isMatchFinished: boolean): 'nextRound' | 'matchEnd' {
     if (isMatchFinished) {
       return 'matchEnd'
