@@ -11,6 +11,7 @@ interface Ring {
   color: number
 }
 
+/** Visual boost effects — glowing auras, expanding rings, and exhaust particles. */
 export class BoostEffects {
   private gfx: Phaser.GameObjects.Graphics
   private particleGfx: Phaser.GameObjects.Graphics
@@ -19,12 +20,14 @@ export class BoostEffects {
   private particleSystem: ParticleSystem
   private elapsed = 0
 
+  /** @param scene - Phaser scene to attach graphics layers to. */
   constructor(scene: Phaser.Scene) {
     this.gfx = scene.add.graphics().setDepth(2)
     this.particleGfx = scene.add.graphics().setDepth(2)
     this.particleSystem = new ParticleSystem(this.particleGfx)
   }
 
+  /** Updates and draws boost effects for all vehicles. */
   update(delta: number, bodies: BodyState[], boostStatus: BoostStatusReader): void {
     this.elapsed += delta
     this.particleSystem.update(delta)
@@ -89,6 +92,7 @@ export class BoostEffects {
     this.particleSystem.draw()
   }
 
+  /** Cleans up graphics layers. */
   destroy(): void {
     this.gfx.destroy()
     this.particleGfx.destroy()

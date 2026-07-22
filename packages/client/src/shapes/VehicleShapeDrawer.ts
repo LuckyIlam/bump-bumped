@@ -1,5 +1,6 @@
 import type Phaser from 'phaser'
 
+/** Fills a vehicle body on the given graphics context (circle, square, diamond, or hexagon). */
 export function fillVehicleShape(
   gfx: Phaser.GameObjects.Graphics,
   shape: string,
@@ -39,6 +40,7 @@ export function fillVehicleShape(
   }
 }
 
+/** Draws an outline around a vehicle body on the given graphics context. */
 export function strokeVehicleShape(
   gfx: Phaser.GameObjects.Graphics,
   shape: string,
