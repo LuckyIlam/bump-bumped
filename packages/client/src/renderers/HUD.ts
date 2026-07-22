@@ -23,12 +23,14 @@ interface HUDPlayer {
   alive: boolean
 }
 
+/** Heads-up display — round info, player scores, boost charge indicators. */
 export class HUD {
   private gfx: Phaser.GameObjects.Graphics
   private text: Phaser.GameObjects.Text
   private roundText: Phaser.GameObjects.Text
   private playerLabels: Phaser.GameObjects.Text[] = []
 
+  /** @param scene - Phaser scene to attach graphics and text objects to. */
   constructor(scene: Phaser.Scene) {
     this.gfx = scene.add.graphics().setDepth(100).setScrollFactor(0)
     this.text = scene.add
@@ -63,6 +65,7 @@ export class HUD {
     }
   }
 
+  /** Renders the HUD for the current frame. */
   draw(roundNumber: number, totalRounds: number, players: HUDPlayer[], boostStatus: BoostStatusReader): void {
     this.gfx.clear()
     this.roundText.setText(`Manche ${roundNumber} / ${totalRounds}`)
@@ -87,6 +90,7 @@ export class HUD {
     }
   }
 
+  /** Draws a single boost charge indicator (idle / active / recharging). */
   private drawBoostCharge(x: number, y: number, radius: number, boostState: string | undefined, progress: number): void {
     this.gfx.fillStyle(0x222222, 0.8)
     this.gfx.fillCircle(x, y, radius + 1)
@@ -108,6 +112,7 @@ export class HUD {
     }
   }
 
+  /** Cleans up all HUD graphics and text objects. */
   destroy(): void {
     this.gfx.destroy()
     this.text.destroy()

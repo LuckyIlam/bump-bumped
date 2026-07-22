@@ -12,14 +12,17 @@ interface Particle {
   size: number
 }
 
+/** Simple sprite-less particle system drawn directly via Graphics. */
 export class ParticleSystem {
   private particles: Particle[] = []
   private gfx: Phaser.GameObjects.Graphics
 
+  /** @param gfx - Graphics object to draw particles on. */
   constructor(gfx: Phaser.GameObjects.Graphics) {
     this.gfx = gfx
   }
 
+  /** Spawns particles at the given position. */
   emit(x: number, y: number, color: number, count: number, opts?: { speed?: number; life?: number; size?: number; spread?: number }): void {
     const speed = opts?.speed ?? 30
     const life = opts?.life ?? 400
@@ -43,6 +46,7 @@ export class ParticleSystem {
     }
   }
 
+  /** Advances particle positions and lifetimes. */
   update(delta: number): void {
     const dt = delta / 1000
     for (const p of this.particles) {
@@ -54,6 +58,7 @@ export class ParticleSystem {
     this.particles = this.particles.filter((p) => p.life > 0)
   }
 
+  /** Draws all active particles as filled circles. */
   draw(): void {
     for (const p of this.particles) {
       this.gfx.fillStyle(p.color, p.alpha)
@@ -61,6 +66,7 @@ export class ParticleSystem {
     }
   }
 
+  /** Removes all particles instantly. */
   clear(): void {
     this.particles = []
   }

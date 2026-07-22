@@ -17,15 +17,18 @@ const ZONE_COLORS: Record<string, number> = {
 
 const WALL_LINE_WIDTH = 4
 
+/** Renders the arena — background grid, zones, pockets, and walls. */
 export class ArenaRenderer {
   private gfx: Phaser.GameObjects.Graphics
   private map: MapData
 
+  /** @param scene - Phaser scene to attach graphics to. @param map - Map data to render. */
   constructor(scene: Phaser.Scene, map: MapData) {
     this.map = map
     this.gfx = scene.add.graphics()
   }
 
+  /** Clears and redraws the full arena. */
   draw(): void {
     this.gfx.clear()
     this.drawBackground()

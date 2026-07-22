@@ -11,15 +11,18 @@ interface Elimination {
   progress: number
 }
 
+/** Plays elimination animations — shrinking vehicle + floating score popup. */
 export class EliminationAnimation {
   private gfx: Phaser.GameObjects.Graphics
   private anims: Elimination[] = []
   private scorePops: { text: Phaser.GameObjects.Text; vy: number; alpha: number }[] = []
 
+  /** @param scene - Phaser scene for graphics and text creation. */
   constructor(private scene: Phaser.Scene) {
     this.gfx = scene.add.graphics().setDepth(3)
   }
 
+  /** Begins an elimination animation at the given position. */
   start(params: { x: number; y: number; shape: string; colorIndex: number }, scoreText?: string): void {
     const color = PLAYER_COLORS[params.colorIndex % PLAYER_COLORS.length]
     this.anims.push({
@@ -46,6 +49,7 @@ export class EliminationAnimation {
     }
   }
 
+  /** Advances all active animations. */
   update(delta: number): void {
     for (const a of this.anims) {
       a.progress += delta / 500
@@ -65,6 +69,7 @@ export class EliminationAnimation {
     }
   }
 
+  /** Draws all active elimination animations. */
   draw(): void {
     this.gfx.clear()
     for (const a of this.anims) {
@@ -86,10 +91,12 @@ export class EliminationAnimation {
     this.gfx.lineBetween(x, y, x + Math.cos(a.angle) * r * 1.4, y + Math.sin(a.angle) * r * 1.4)
   }
 
+  /** Cleans up graphics layer — does NOT destroy active score pop texts. */
   destroy(): void {
     this.gfx.destroy()
   }
 
+  /** Removes all active animations and score popups instantly. */
   clear(): void {
     this.anims = []
     for (const pop of this.scorePops) {

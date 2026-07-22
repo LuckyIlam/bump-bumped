@@ -5,13 +5,16 @@ import { fillVehicleShape, strokeVehicleShape } from '../shapes/VehicleShapeDraw
 
 const HEADING_LENGTH = 44
 
+/** Renders vehicle bodies — filled shape + heading line + outline. */
 export class VehicleRenderer {
   private gfx: Phaser.GameObjects.Graphics
 
+  /** @param scene - Phaser scene to attach the graphics layer to. */
   constructor(scene: Phaser.Scene) {
     this.gfx = scene.add.graphics()
   }
 
+  /** Clears and redraws all vehicle bodies. */
   draw(bodies: BodyState[]): void {
     this.gfx.clear()
 
