@@ -92,4 +92,9 @@ export class GameEngine {
   startNewRound(): void {
     this.gameState.startRound()
   }
+
+  /** Releases all resources held by the engine (physics world, event listeners, etc.). */
+  cleanup(): void {
+    this.engine.destroy()
+  }
 }

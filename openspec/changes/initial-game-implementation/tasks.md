@@ -108,16 +108,16 @@
 
 ## 14. Determinism Verification
 
-- [ ] 14.1 Write integration test: same inputs x 2 runs → identical world state
-- [ ] 14.2 Verify seeded randomness produces consistent shape assignment
-- [ ] 14.3 Verify Matter.js determinism with fixed timestep in Node.js
+- [x] 14.1 Write integration test: same inputs x 2 runs → identical world state
+- [x] 14.2 Verify seeded randomness produces consistent shape assignment
+- [x] 14.3 Verify Matter.js determinism with fixed timestep in Node.js
 
 ## 15. Integration & Playtest
 
-- [ ] 15.1 Wire engine + game state + client in GameScene (engine step → render frame)
-- [ ] 15.2 Test 2-player split keyboard end-to-end: select → countdown → play → elimination → round end → match end
-- [ ] 15.3 Test 4-player (2 keyboard + 2 simulated gamepad)
-- [ ] 15.4 Test default Classic map loads correctly in-game
-- [ ] 15.5 Test boost visual feedback and timer behaviour in-game
-- [ ] 15.6 Test tiebreaker scenario
-- [ ] 15.7 Playtest and tune boost parameters, wall restitution, zone multipliers
+- [x] 15.1 Wire engine + game state + client in GameScene (engine step → render frame)
+- [x] 15.2 Test 2-player split keyboard end-to-end: select → countdown → play → elimination → round end → match end
+- [x] 15.3 Test 4-player (2 keyboard + 2 simulated gamepad)
+- [x] 15.4 Test default Classic map loads correctly in-game
+- [x] 15.5 Test boost visual feedback and timer behaviour in-game
+- [x] 15.6 Test tiebreaker scenario
+- [x] 15.7 Playtest and tune boost parameters, wall restitution, zone multipliers
