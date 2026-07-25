@@ -6,7 +6,8 @@
     "packages/client"
   ],
   "scripts": {
-    "ci": "biome ci && npm run -w packages/client build && npm -w packages/engine test",
+    "build": "npm -w packages/client run build",
+    "ci": "biome ci && npm run build && npm -w packages/engine test",
     "lint": "biome check",
     "format": "biome check --write",
     "prepare": "husky || true"
