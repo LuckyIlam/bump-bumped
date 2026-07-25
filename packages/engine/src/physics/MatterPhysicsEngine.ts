@@ -270,6 +270,18 @@ export class MatterPhysicsEngine implements IPhysicsEngine {
     }
   }
 
+  /** Cleans up the Matter.js world, removes event listeners, and clears all cached state. */
+  destroy(): void {
+    Matter.Events.off(this.engine, 'collisionStart', undefined as any)
+    Matter.Events.off(this.engine, 'afterUpdate', undefined as any)
+    Matter.Composite.clear(this.world, false)
+    this.bodies.clear()
+    this.bodyShapes.clear()
+    this.wallBodies.clear()
+    this.pendingEffects.length = 0
+    this.collisionCallback = null
+  }
+
   private toBodyState(id: BodyId, body: Matter.Body): BodyState {
     return {
       id,

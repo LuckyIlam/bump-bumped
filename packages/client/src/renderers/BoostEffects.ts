@@ -92,6 +92,13 @@ export class BoostEffects {
     this.particleSystem.draw()
   }
 
+  /** Clears per-round state (called when a new round starts). */
+  reset(): void {
+    this.prevBoostState.clear()
+    this.rings.length = 0
+    this.elapsed = 0
+  }
+
   /** Cleans up graphics layers. */
   destroy(): void {
     this.gfx.destroy()

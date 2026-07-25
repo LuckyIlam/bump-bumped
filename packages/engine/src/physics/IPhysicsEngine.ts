@@ -19,4 +19,6 @@ export interface IPhysicsEngine {
   onCollision(callback: CollisionCallback): void
   getBodies(): BodyState[]
   getWorldState(): WorldState
+
+  destroy(): void
 }

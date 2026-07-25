@@ -66,6 +66,14 @@ export class GameState {
 
   private playerCount: number
 
+  /**
+   * @param engine - Physics engine instance.
+   * @param vehicleSystem - Vehicle management system.
+   * @param map - Map data with spawns, walls, pockets, zones.
+   * @param randomizer - Optional shape randomizer (default picks randomly from available shapes).
+   * @param playerCount - Number of players (defaults to spawn count).
+   * @param eventBus - Optional event bus for emitting game events.
+   */
   constructor(
     engine: IPhysicsEngine,
     vehicleSystem: VehicleSystem,
@@ -74,14 +82,6 @@ export class GameState {
     playerCount?: number,
     eventBus?: EventBus,
   ) {
-    /**
-     * @param engine - Physics engine instance.
-     * @param vehicleSystem - Vehicle management system.
-     * @param map - Map data with spawns, walls, pockets, zones.
-     * @param randomizer - Optional shape randomizer (default picks randomly from available shapes).
-     * @param playerCount - Number of players (defaults to spawn count).
-     * @param eventBus - Optional event bus for emitting game events.
-     */
     this.engine = engine
     this.vehicleSystem = vehicleSystem
     this.map = map
