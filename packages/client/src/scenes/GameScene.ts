@@ -82,6 +82,10 @@ export class GameScene extends Phaser.Scene {
     })
 
     this.startCountdown()
+
+    this.events.on('shutdown', () => {
+      this.gameEngine.cleanup()
+    })
   }
 
   /** Phaser lifecycle — fixed-step game loop with accumulator. */
@@ -219,6 +223,7 @@ export class GameScene extends Phaser.Scene {
       } else {
         this.gameEngine.startNewRound()
         this.eliminationAnimation.clear()
+        this.boostEffects.reset()
         this.startCountdown()
       }
     })
