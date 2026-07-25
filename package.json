@@ -9,7 +9,7 @@
     "ci": "biome ci && npm run -w packages/client build && npm -w packages/engine test",
     "lint": "biome check",
     "format": "biome check --write",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "lint-staged": {
     "*": "biome check --write --no-errors-on-unmatched"
