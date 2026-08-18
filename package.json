@@ -16,7 +16,7 @@
     "*": "biome check --write --no-errors-on-unmatched"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
+    "@biomejs/biome": "^2.5.8",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0"
   }
